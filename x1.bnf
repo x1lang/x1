@@ -1,0 +1,61 @@
+compilation_unit ::= [ package_statement ] {import_statement} type_declaration* method_declaration*
+
+package_statement ::= "package" package_name
+
+package_name ::= identifier { "." identifier }
+
+import_statement ::= "import" package_name
+
+identifier ::= letter { letter | digit }
+
+letter ::= "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z" | "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z"
+
+digit ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+
+type_declaration ::= "type" identifier "=" field_declaration*
+
+field_declaration ::= identifier ":" type
+
+method_declaration ::= "function" identifier "(" [ parameter_list ] ")" [ ":" type ] block
+
+parameter_list ::= parameter { "," parameter }
+
+parameter ::= identifier ":" type
+
+type ::= "int" | "bool" | "string" | "void" | identifier
+
+block ::= "{" { statement } "}"
+
+statement ::= variable_declaration | assignment_statement | if_statement | return_statement
+
+variable_declaration ::= "var" identifier ":" type "=" expression
+
+assignment_statement ::= identifier "=" expression
+
+if_statement ::= "if" "(" expression ")" block [ "else" block ]
+
+return_statement ::= "return" [ expression ]
+
+expression ::= literal | identifier | binary_expression | unary_expression | "(" expression ")"
+
+literal ::= integer_literal | boolean_literal | string_literal
+
+integer_literal ::= digit { digit }
+
+boolean_literal ::= "true" | "false"
+
+string_literal ::= '"' { character } '"'
+
+character ::= letter | digit | " " | "!" | '"' | "#" | "$" | "%" | "&" | "'" | "(" | ")" | "*" | "+" | "," | "-" | "." | "/" | ":" | ";" | "<" | "=" | ">" | "?" | "@" | "[" | "\\" | "]" | "^" | "_" | "`" | "{" | "|" | "}" | "~"
+
+binary_expression ::= binary_expression binary_operator binary_expression
+
+binary_operator ::= "+" | "-" | "*" | "/" | "%" | "==" | "!=" | "<" | "<=" | ">" | ">=" | "&&" | "||"
+
+unary_expression ::= unary_operator expression
+
+unary_operator ::= "-" | "!"
+
+
+
+
