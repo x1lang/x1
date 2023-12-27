@@ -19,6 +19,7 @@ public class Lexer {
     KEYWORDS.put("if", TokenType.IF);
     KEYWORDS.put("else", TokenType.ELSE);
     KEYWORDS.put("for", TokenType.FOR);
+    KEYWORDS.put("foreach", TokenType.FOREACH);
     KEYWORDS.put("return", TokenType.RETURN);
     KEYWORDS.put("true", TokenType.TRUE);
     KEYWORDS.put("false", TokenType.FALSE);
@@ -67,9 +68,6 @@ public class Lexer {
       case ':':
         consume();
         return new Token(TokenType.COLON, ":");
-      case '.':
-        consume();
-        return new Token(TokenType.DOT, ".");
       case '+':
         consume();
         return new Token(TokenType.PLUS, "+");
@@ -190,7 +188,7 @@ public class Lexer {
       consume();
     }
     consume(); // consume the closing quote
-    return new Token(TokenType.STRING_LITERAL, buffer.toString());
+    return new Token(TokenType.STRING, buffer.toString());
   }
 
   @Override

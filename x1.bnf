@@ -22,7 +22,7 @@ parameter_list ::= parameter { "," parameter }
 
 parameter ::= identifier ":" type
 
-type ::= "int" | "bool" | "string" | "void" | identifier
+type ::= '[]' identifier | identifier
 
 block ::= "{" { statement } "}"
 
@@ -38,13 +38,15 @@ return_statement ::= "return" [ expression ]
 
 expression ::= literal | identifier | binary_expression | unary_expression | "(" expression ")"
 
-literal ::= integer_literal | boolean_literal | string_literal
+literal ::= integer_literal | boolean_literal | string_literal | array_literal
 
 integer_literal ::= digit { digit }
 
 boolean_literal ::= "true" | "false"
 
 string_literal ::= '"' { character } '"'
+
+array_literal ::= "[" [ expression { "," expression } ] "]"
 
 character ::= letter | digit | " " | "!" | '"' | "#" | "$" | "%" | "&" | "'" | "(" | ")" | "*" | "+" | "," | "-" | "." | "/" | ":" | ";" | "<" | "=" | ">" | "?" | "@" | "[" | "\\" | "]" | "^" | "_" | "`" | "{" | "|" | "}" | "~"
 

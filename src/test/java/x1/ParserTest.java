@@ -30,13 +30,15 @@ class ParserTest {
                               new ParameterNode(
                                   new IdentifierNode(new Token(TokenType.IDENTIFIER, "v")),
                                   new TypeNode(
-                                      new IdentifierNode(new Token(TokenType.IDENTIFIER, "Int")))),
+                                      new IdentifierNode(new Token(TokenType.IDENTIFIER, "Int")),
+                                      false)),
                               new ParameterNode(
                                   new IdentifierNode(new Token(TokenType.IDENTIFIER, "n")),
                                   new TypeNode(
-                                      new IdentifierNode(
-                                          new Token(TokenType.IDENTIFIER, "Int")))))),
-                      new TypeNode(new IdentifierNode(new Token(TokenType.IDENTIFIER, "Int"))),
+                                      new IdentifierNode(new Token(TokenType.IDENTIFIER, "Int")),
+                                      false)))),
+                      new TypeNode(
+                          new IdentifierNode(new Token(TokenType.IDENTIFIER, "Int")), false),
                       new BlockNode(
                           Arrays.asList(
                               new ForDeclarationNode(
@@ -44,7 +46,8 @@ class ParserTest {
                                       new IdentifierNode(new Token(TokenType.IDENTIFIER, "i")),
                                       new TypeNode(
                                           new IdentifierNode(
-                                              new Token(TokenType.IDENTIFIER, "Int"))),
+                                              new Token(TokenType.IDENTIFIER, "Int")),
+                                          false),
                                       new LiteralNode(new Token(TokenType.NUMBER, "0"))),
                                   new BinaryExpressionNode(
                                       new IdentifierNode(new Token(TokenType.IDENTIFIER, "i")),
@@ -87,6 +90,19 @@ class ParserTest {
                                                                       TokenType.IDENTIFIER,
                                                                       "i")))))),
                                               null)))),
+                              new VariableDeclarationNode(
+                                  new IdentifierNode(new Token(TokenType.IDENTIFIER, "y")),
+                                  new TypeNode(
+                                      new IdentifierNode(new Token(TokenType.IDENTIFIER, "Int")),
+                                      true),
+                                  new ArrayExpressionNode(
+                                      Arrays.asList(
+                                          new LiteralNode(new Token(TokenType.NUMBER, "1")),
+                                          new LiteralNode(new Token(TokenType.NUMBER, "2"))))),
+                              new ForEachStatementNode(
+                                  new IdentifierNode(new Token(TokenType.IDENTIFIER, "x")),
+                                  new IdentifierNode(new Token(TokenType.IDENTIFIER, "y")),
+                                  new BlockNode(Collections.emptyList())),
                               new ReturnStatementNode(
                                   new IdentifierNode(new Token(TokenType.IDENTIFIER, "v"))))))));
       assertEquals(expected, compilationUnitNode);

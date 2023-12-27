@@ -83,7 +83,12 @@ public class Parser {
   }
 
   private TypeNode type() throws IOException {
-    return new TypeNode(identifier());
+    if (peek() == TokenType.LBRACKET) {
+      match(TokenType.LBRACKET);
+      match(TokenType.RBRACKET);
+      return new TypeNode(identifier(), true);
+    }
+    return new TypeNode(identifier(), false);
   }
 
   private BlockNode block() throws IOException {
@@ -106,11 +111,24 @@ public class Parser {
         return ifStatement();
       case FOR:
         return forStatement();
+      case FOREACH:
+        return forEachStatement();
       case RETURN:
         return returnStatement();
       default:
         throw new Error("Invalid statement: " + peek());
     }
+  }
+
+  private StatementNode forEachStatement() throws IOException {
+    match(TokenType.FOREACH);
+    match(TokenType.LPAREN);
+    IdentifierNode identifier = identifier();
+    match(TokenType.COLON);
+    ExpressionNode expression = expression();
+    match(TokenType.RPAREN);
+    BlockNode block = block();
+    return new ForEachStatementNode(identifier, expression, block);
   }
 
   private VariableDeclarationNode variableDeclaration() throws IOException {
@@ -164,7 +182,7 @@ public class Parser {
         || peek == TokenType.NUMBER
         || peek == TokenType.TRUE
         || peek == TokenType.FALSE
-        || peek == TokenType.STRING_LITERAL
+        || peek == TokenType.STRING
         || peek == TokenType.MINUS
         || peek == TokenType.NOT
         || peek == TokenType.LPAREN) {
@@ -179,10 +197,12 @@ public class Parser {
       case NUMBER:
       case TRUE:
       case FALSE:
-      case STRING_LITERAL:
+      case STRING:
         return literal();
       case IDENTIFIER:
         return identifier();
+      case LBRACKET:
+        return arrayExpression();
       case LPAREN:
         match(TokenType.LPAREN);
         ExpressionNode expression = expression();
@@ -194,6 +214,18 @@ public class Parser {
       default:
         return binaryExpression();
     }
+  }
+
+  private ExpressionNode arrayExpression() throws IOException {
+    match(TokenType.LBRACKET);
+    List<ExpressionNode> expressions = new ArrayList<>();
+    expressions.add(expression());
+    while (peek() == TokenType.COMMA) {
+      match(TokenType.COMMA);
+      expressions.add(expression());
+    }
+    match(TokenType.RBRACKET);
+    return new ArrayExpressionNode(expressions);
   }
 
   private LiteralNode literal() throws IOException {

@@ -4,5 +4,8 @@ function sum(v: Int, n: Int): Int {
       v = + v i
     }
   }
+  var y:[]Int = [1,2]
+  foreach (x : y) {
+  }
   return v
 }

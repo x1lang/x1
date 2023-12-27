@@ -5,4 +5,5 @@ import lombok.Value;
 @Value
 public class TypeNode {
   IdentifierNode identifier;
+  boolean array;
 }
