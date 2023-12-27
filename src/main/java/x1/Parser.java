@@ -1,6 +1,8 @@
 package x1;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import x1.model.*;
 
 public class Parser {
@@ -19,93 +21,83 @@ public class Parser {
   }
 
   private CompilationUnitNode compilationUnit() throws IOException {
-    CompilationUnitNode node = new CompilationUnitNode();
-    while (currentToken.getType() == TokenType.TYPE) {
-      node.addTypeDeclaration(typeDeclaration());
+    List<TypeDeclarationNode> typeDeclarations = new ArrayList<>();
+    List<MethodDeclarationNode> methodDeclarations = new ArrayList<>();
+    while (peek() == TokenType.TYPE) {
+      typeDeclarations.add(typeDeclaration());
     }
-    while (currentToken.getType() == TokenType.FUNCTION) {
-      node.addMethodDeclaration(methodDeclaration());
+    while (peek() == TokenType.FUNCTION) {
+      methodDeclarations.add(methodDeclaration());
     }
-    return node;
+    return new CompilationUnitNode(typeDeclarations, methodDeclarations);
   }
 
   private TypeDeclarationNode typeDeclaration() throws IOException {
-    TypeDeclarationNode node = new TypeDeclarationNode();
     match(TokenType.TYPE);
-    node.setIdentifier(identifier());
-    match(TokenType.EQUAL);
-    while (currentToken.getType() == TokenType.IDENTIFIER) {
-      node.addFieldDeclaration(fieldDeclaration());
+    IdentifierNode identifier = identifier();
+    match(TokenType.LBRACE);
+    List<FieldDeclarationNode> fieldDeclarations = new ArrayList<>();
+    while (peek() == TokenType.IDENTIFIER) {
+      fieldDeclarations.add(fieldDeclaration());
     }
-    return node;
+    match(TokenType.RBRACE);
+    return new TypeDeclarationNode(identifier, fieldDeclarations);
   }
 
   private FieldDeclarationNode fieldDeclaration() throws IOException {
-    FieldDeclarationNode node = new FieldDeclarationNode();
-    node.setIdentifier(identifier());
+    IdentifierNode identifier = identifier();
     match(TokenType.COLON);
-    node.setType(type());
-    return node;
+    TypeNode type = type();
+    return new FieldDeclarationNode(identifier, type);
   }
 
   private MethodDeclarationNode methodDeclaration() throws IOException {
-    MethodDeclarationNode node = new MethodDeclarationNode();
     match(TokenType.FUNCTION);
-    node.setIdentifier(identifier());
+    IdentifierNode identifier = identifier();
     match(TokenType.LPAREN);
-    if (currentToken.getType() == TokenType.IDENTIFIER) {
-      node.setParameterList(parameterList());
-    }
+    ParameterListNode parameterList = parameterList();
     match(TokenType.RPAREN);
-    if (currentToken.getType() == TokenType.COLON) {
-      match(TokenType.COLON);
-      node.setType(type());
-    }
-    node.setBlock(block());
-    return node;
+    match(TokenType.COLON);
+    TypeNode type = type();
+    BlockNode block = block();
+    return new MethodDeclarationNode(identifier, parameterList, type, block);
   }
 
   private ParameterListNode parameterList() throws IOException {
-    ParameterListNode node = new ParameterListNode();
-    node.addParameter(parameter());
-    while (currentToken.getType() == TokenType.COMMA) {
-      match(TokenType.COMMA);
-      node.addParameter(parameter());
+    List<ParameterNode> parameters = new ArrayList<>();
+    if (peek() == TokenType.IDENTIFIER) {
+      parameters.add(parameter());
     }
-    return node;
+    while (peek() == TokenType.COMMA) {
+      match(TokenType.COMMA);
+      parameters.add(parameter());
+    }
+    return new ParameterListNode(parameters);
   }
 
   private ParameterNode parameter() throws IOException {
-    ParameterNode node = new ParameterNode();
-    node.setIdentifier(identifier());
+    IdentifierNode identifier = identifier();
     match(TokenType.COLON);
-    node.setType(type());
-    return node;
+    TypeNode type = type();
+    return new ParameterNode(identifier, type);
   }
 
   private TypeNode type() throws IOException {
-    TypeNode node = new TypeNode();
-    if (currentToken.getType() == TokenType.IDENTIFIER) {
-      node.setIdentifier(identifier());
-    } else {
-      node.setToken(currentToken);
-      match(currentToken.getType());
-    }
-    return node;
+    return new TypeNode(identifier());
   }
 
   private BlockNode block() throws IOException {
-    BlockNode node = new BlockNode();
+    List<StatementNode> statements = new ArrayList<>();
     match(TokenType.LBRACE);
-    while (currentToken.getType() != TokenType.RBRACE) {
-      node.addStatement(statement());
+    while (peek() != TokenType.RBRACE) {
+      statements.add(statement());
     }
     match(TokenType.RBRACE);
-    return node;
+    return new BlockNode(statements);
   }
 
   private StatementNode statement() throws IOException {
-    switch (currentToken.getType()) {
+    switch (peek()) {
       case VAR:
         return variableDeclaration();
       case IDENTIFIER:
@@ -117,69 +109,73 @@ public class Parser {
       case RETURN:
         return returnStatement();
       default:
-        throw new Error("Invalid statement: " + currentToken.getType());
+        throw new Error("Invalid statement: " + peek());
     }
   }
 
   private VariableDeclarationNode variableDeclaration() throws IOException {
-    VariableDeclarationNode node = new VariableDeclarationNode();
     match(TokenType.VAR);
-    node.setIdentifier(identifier());
+    IdentifierNode identifier = identifier();
     match(TokenType.COLON);
-    node.setType(type());
+    TypeNode type = type();
     match(TokenType.EQUAL);
-    node.setExpression(expression());
-    return node;
+    ExpressionNode expression = expression();
+    return new VariableDeclarationNode(identifier, type, expression);
   }
 
   private AssignmentStatementNode assignmentStatement() throws IOException {
-    AssignmentStatementNode node = new AssignmentStatementNode();
-    node.setIdentifier(identifier());
+    IdentifierNode identifier = identifier();
     match(TokenType.EQUAL);
-    node.setExpression(expression());
-    return node;
+    ExpressionNode expression = expression();
+    return new AssignmentStatementNode(identifier, expression);
   }
 
   private IfStatementNode ifStatement() throws IOException {
-    IfStatementNode node = new IfStatementNode();
     match(TokenType.IF);
     match(TokenType.LPAREN);
-    node.setExpression(expression());
+    ExpressionNode expression = expression();
     match(TokenType.RPAREN);
-    node.setBlock(block());
-    if (currentToken.getType() == TokenType.ELSE) {
+    BlockNode block = block();
+    BlockNode elseBlock = null;
+    if (peek() == TokenType.ELSE) {
       match(TokenType.ELSE);
-      node.setElseBlock(block());
+      elseBlock = block();
     }
-    return node;
+    return new IfStatementNode(expression, block, elseBlock);
   }
 
   private ForDeclarationNode forStatement() throws IOException {
-    // for-loop
-    ForDeclarationNode node = new ForDeclarationNode();
     match(TokenType.FOR);
     match(TokenType.LPAREN);
-    node.setVariableDeclaration(variableDeclaration());
+    VariableDeclarationNode variableDeclarationNode = variableDeclaration();
     match(TokenType.SEMICOLON);
-    node.setExpression(expression());
+    ExpressionNode expression = expression();
     match(TokenType.SEMICOLON);
-    node.setAssignmentStatement(assignmentStatement());
+    AssignmentStatementNode assignmentStatement = assignmentStatement();
     match(TokenType.RPAREN);
-    node.setBlock(block());
-    return node;
+    BlockNode block = block();
+    return new ForDeclarationNode(variableDeclarationNode, expression, assignmentStatement, block);
   }
 
   private ReturnStatementNode returnStatement() throws IOException {
-    ReturnStatementNode node = new ReturnStatementNode();
     match(TokenType.RETURN);
-    if (currentToken.getType() != TokenType.SEMICOLON) {
-      node.setExpression(expression());
+    TokenType peek = peek();
+    if (peek == TokenType.IDENTIFIER
+        || peek == TokenType.NUMBER
+        || peek == TokenType.TRUE
+        || peek == TokenType.FALSE
+        || peek == TokenType.STRING_LITERAL
+        || peek == TokenType.MINUS
+        || peek == TokenType.NOT
+        || peek == TokenType.LPAREN) {
+      ExpressionNode expression = expression();
+      return new ReturnStatementNode(expression);
     }
-    return node;
+    return new ReturnStatementNode(null);
   }
 
   private ExpressionNode expression() throws IOException {
-    switch (currentToken.getType()) {
+    switch (peek()) {
       case NUMBER:
       case TRUE:
       case FALSE:
@@ -188,11 +184,10 @@ public class Parser {
       case IDENTIFIER:
         return identifier();
       case LPAREN:
-        ParenExpressionNode node = new ParenExpressionNode();
         match(TokenType.LPAREN);
-        node.setExpression(expression());
+        ExpressionNode expression = expression();
         match(TokenType.RPAREN);
-        return node;
+        return new ParenExpressionNode(expression);
       case MINUS:
       case NOT:
         return unaryExpression();
@@ -202,55 +197,49 @@ public class Parser {
   }
 
   private LiteralNode literal() throws IOException {
-    LiteralNode node = new LiteralNode();
-    node.setToken(currentToken);
-    match(currentToken.getType());
-    return node;
+    Token token = currentToken;
+    match(peek());
+    return new LiteralNode(token);
   }
 
   private BinaryExpressionNode binaryExpression() throws IOException {
-    BinaryExpressionNode node = new BinaryExpressionNode();
-    node.setOperator(binaryOperator());
-    node.setLeftExpression(expression());
-    node.setRightExpression(expression());
-    return node;
+    BinaryOperatorNode operator = binaryOperator();
+    return new BinaryExpressionNode(expression(), operator, expression());
   }
 
   private BinaryOperatorNode binaryOperator() throws IOException {
-    BinaryOperatorNode node = new BinaryOperatorNode();
-    node.setToken(currentToken);
-    match(currentToken.getType());
-    return node;
+    Token token = currentToken;
+    match(peek());
+    return new BinaryOperatorNode(token);
   }
 
   private UnaryExpressionNode unaryExpression() throws IOException {
-    UnaryExpressionNode node = new UnaryExpressionNode();
-    node.setOperator(unaryOperator());
-    node.setExpression(expression());
-    return node;
+    return new UnaryExpressionNode(unaryOperator(), expression());
   }
 
   private UnaryOperatorNode unaryOperator() throws IOException {
-    UnaryOperatorNode node = new UnaryOperatorNode();
-    node.setToken(currentToken);
-    match(currentToken.getType());
-    return node;
+    Token token = currentToken;
+    match(peek());
+    return new UnaryOperatorNode(token);
   }
 
   private IdentifierNode identifier() throws IOException {
-    IdentifierNode node = new IdentifierNode();
-    node.setToken(currentToken);
+    Token token = currentToken;
     match(TokenType.IDENTIFIER);
-    return node;
+    return new IdentifierNode(token);
+  }
+
+  private TokenType peek() {
+    return currentToken.getType();
   }
 
   private void match(TokenType expected) throws IOException {
-    if (currentToken.getType() == expected) {
+    if (peek() == expected) {
       currentToken = lexer.nextToken();
     } else {
-      throw new Error(
+      throw new IllegalStateException(
           "Unexpected token: "
-              + currentToken.getType()
+              + peek()
               + " expected: "
               + expected
               + " at "
@@ -258,5 +247,10 @@ public class Parser {
               + ":"
               + lexer.getColumn());
     }
+  }
+
+  @Override
+  public String toString() {
+    return lexer + ":" + currentToken;
   }
 }

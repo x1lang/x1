@@ -5,14 +5,10 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.Getter;
-import x1.model.*;
+import x1.model.Token;
+import x1.model.TokenType;
 
 public class Lexer {
-  private final InputStream in;
-  private int currentChar;
-  @Getter private int line = 1;
-  @Getter private int column = 1;
-
   private static final Map<String, TokenType> KEYWORDS;
 
   static {
@@ -27,6 +23,11 @@ public class Lexer {
     KEYWORDS.put("true", TokenType.TRUE);
     KEYWORDS.put("false", TokenType.FALSE);
   }
+
+  private final InputStream in;
+  private int currentChar;
+  @Getter private int line = 1;
+  @Getter private int column = 1;
 
   Lexer(InputStream in) throws IOException {
     this.in = in;
@@ -190,5 +191,10 @@ public class Lexer {
     }
     consume(); // consume the closing quote
     return new Token(TokenType.STRING_LITERAL, buffer.toString());
+  }
+
+  @Override
+  public String toString() {
+    return "[" + line + ":" + column + "]" + (char) currentChar;
   }
 }

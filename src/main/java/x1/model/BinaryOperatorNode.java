@@ -1,8 +1,8 @@
 package x1.model;
 
-import lombok.Data;
+import lombok.Value;
 
-@Data
+@Value
 public class BinaryOperatorNode {
-  private Token token;
+  Token token;
 }

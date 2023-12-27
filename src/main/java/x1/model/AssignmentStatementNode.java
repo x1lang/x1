@@ -1,9 +1,9 @@
 package x1.model;
 
-import lombok.Data;
+import lombok.Value;
 
-@Data
+@Value
 public class AssignmentStatementNode implements StatementNode {
-  private IdentifierNode identifier;
-  private ExpressionNode expression;
+  IdentifierNode identifier;
+  ExpressionNode expression;
 }

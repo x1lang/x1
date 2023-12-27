@@ -1,11 +1,11 @@
 package x1.model;
 
-import lombok.Data;
+import lombok.Value;
 
-@Data
+@Value
 public class ForDeclarationNode implements StatementNode {
-  private VariableDeclarationNode variableDeclaration;
-  private ExpressionNode expression;
-  private AssignmentStatementNode assignmentStatement;
-  private BlockNode block;
+  VariableDeclarationNode variableDeclaration;
+  ExpressionNode expression;
+  AssignmentStatementNode assignmentStatement;
+  BlockNode block;
 }

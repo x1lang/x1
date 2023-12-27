@@ -1,8 +1,8 @@
 package x1.model;
 
-import lombok.Data;
+import lombok.Value;
 
-@Data
+@Value
 public class LiteralNode implements ExpressionNode {
-  private Token token;
+  Token token;
 }

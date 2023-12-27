@@ -1,9 +1,9 @@
 package x1.model;
 
-import lombok.Data;
+import lombok.Value;
 
-@Data
+@Value
 public class UnaryExpressionNode implements ExpressionNode {
-  private UnaryOperatorNode operator;
-  private ExpressionNode expression;
+  UnaryOperatorNode operator;
+  ExpressionNode expression;
 }

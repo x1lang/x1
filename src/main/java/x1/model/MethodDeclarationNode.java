@@ -1,11 +1,11 @@
 package x1.model;
 
-import lombok.Data;
+import lombok.Value;
 
-@Data
+@Value
 public class MethodDeclarationNode {
-  private IdentifierNode identifier;
-  private ParameterListNode parameterList;
-  private TypeNode type;
-  private BlockNode block;
+  IdentifierNode identifier;
+  ParameterListNode parameterList;
+  TypeNode type;
+  BlockNode block;
 }

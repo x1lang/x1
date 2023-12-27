@@ -1,13 +1,10 @@
 package x1.model;
 
-import lombok.Data;
+import java.util.List;
+import lombok.Value;
 
-@Data
+@Value
 public class TypeDeclarationNode {
-  private IdentifierNode identifier;
-  private FieldDeclarationNode fieldDeclaration;
-
-  public void addFieldDeclaration(FieldDeclarationNode fieldDeclarationNode) {
-    this.fieldDeclaration = fieldDeclarationNode;
-  }
+  IdentifierNode identifier;
+  List<FieldDeclarationNode> fieldDeclarations;
 }

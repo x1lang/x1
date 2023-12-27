@@ -1,9 +1,8 @@
 package x1.model;
 
-import lombok.Data;
+import lombok.Value;
 
-@Data
+@Value
 public class TypeNode {
-  private IdentifierNode identifier;
-  private Token token;
+  IdentifierNode identifier;
 }

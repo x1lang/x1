@@ -1,10 +1,10 @@
 package x1.model;
 
-import lombok.Data;
+import lombok.Value;
 
-@Data
+@Value
 public class VariableDeclarationNode implements StatementNode {
-  private IdentifierNode identifier;
-  private TypeNode type;
-  private ExpressionNode expression;
+  IdentifierNode identifier;
+  TypeNode type;
+  ExpressionNode expression;
 }

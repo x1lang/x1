@@ -1,9 +1,9 @@
 package x1.model;
 
-import lombok.Data;
+import lombok.Value;
 
-@Data
+@Value
 public class ParameterNode {
-  private IdentifierNode identifier;
-  private TypeNode type;
+  IdentifierNode identifier;
+  TypeNode type;
 }

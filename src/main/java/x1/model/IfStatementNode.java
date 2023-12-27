@@ -1,10 +1,10 @@
 package x1.model;
 
-import lombok.Data;
+import lombok.Value;
 
-@Data
+@Value
 public class IfStatementNode implements StatementNode {
-  private ExpressionNode expression;
-  private BlockNode block;
-  private BlockNode elseBlock;
+  ExpressionNode expression;
+  BlockNode block;
+  BlockNode elseBlock;
 }
