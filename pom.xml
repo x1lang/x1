@@ -24,7 +24,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>RELEASE</version>
+            <version>5.10.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -37,6 +37,7 @@
                 <version>2.24.1</version>
                 <executions>
                     <execution>
+                        <phase>process-sources</phase>
                         <goals>
                             <goal>apply</goal>
                         </goals>
@@ -44,7 +45,6 @@
                             <java>
                                 <googleJavaFormat/>
                                 <removeUnusedImports/>
-                                <formatAnnotations/>
                             </java>
                         </configuration>
                     </execution>

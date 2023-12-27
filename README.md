@@ -14,7 +14,6 @@ code in a way that can be turned into other programming languages.
 An example program:
 
 ```x1
-package x
 // This is a comment
 function sum(v, n) {
   for (i = 0; i < n; i = i + 1) {
@@ -56,7 +55,6 @@ function sum(v: number, n: number): number {
 Java:
 
 ```java
-package x;
 
 // This is a comment
 public int sum(int v, int n) {
@@ -84,8 +82,6 @@ Go:
 
 ```go
 // This is a comment
-package x
-
 func Sum(v int, n int) int {
 	for i := 0; i < n; i = i + 1 {
 		if i%2 == 0 {

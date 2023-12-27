@@ -1,27 +1,22 @@
 package x1;
 
-import lombok.Getter;
-import x1.model.*;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Getter;
+import x1.model.*;
 
- public class Lexer {
+public class Lexer {
   private final InputStream in;
   private int currentChar;
-  @Getter
-  private int line = 1;
-  @Getter
-  private int column = 1;
+  @Getter private int line = 1;
+  @Getter private int column = 1;
 
   private static final Map<String, TokenType> KEYWORDS;
 
   static {
     KEYWORDS = new HashMap<>();
-    KEYWORDS.put("package", TokenType.PACKAGE);
-    KEYWORDS.put("import", TokenType.IMPORT);
     KEYWORDS.put("type", TokenType.TYPE);
     KEYWORDS.put("function", TokenType.FUNCTION);
     KEYWORDS.put("var", TokenType.VAR);
@@ -33,13 +28,12 @@ import java.util.Map;
     KEYWORDS.put("false", TokenType.FALSE);
   }
 
-
-   Lexer(InputStream in) throws IOException {
+  Lexer(InputStream in) throws IOException {
     this.in = in;
     this.currentChar = in.read();
   }
 
-   Token nextToken() throws IOException {
+  Token nextToken() throws IOException {
     while (Character.isWhitespace(currentChar)) {
       consume();
     }
@@ -148,15 +142,16 @@ import java.util.Map;
           consume();
           return new Token(TokenType.OR, "||");
         } else {
-          throw new IllegalStateException("Invalid character: " + (char) currentChar + " at " + line + ":" + column);
+          throw new IllegalStateException(
+              "Invalid character: " + (char) currentChar + " at " + line + ":" + column);
         }
       case '"':
         return stringLiteral();
       default:
-        throw new IllegalStateException("Invalid character: " + (char) currentChar + " at " + line + ":" + column);
+        throw new IllegalStateException(
+            "Invalid character: " + (char) currentChar + " at " + line + ":" + column);
     }
   }
-
 
   private void consume() throws IOException {
     currentChar = in.read();
@@ -188,12 +183,12 @@ import java.util.Map;
 
   private Token stringLiteral() throws IOException {
     StringBuilder buffer = new StringBuilder();
-    consume();  // consume the opening quote
+    consume(); // consume the opening quote
     while (currentChar != '"') {
       buffer.append((char) currentChar);
       consume();
     }
-    consume();  // consume the closing quote
+    consume(); // consume the closing quote
     return new Token(TokenType.STRING_LITERAL, buffer.toString());
   }
 }

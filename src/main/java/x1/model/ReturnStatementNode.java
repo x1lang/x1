@@ -4,5 +4,5 @@ import lombok.Data;
 
 @Data
 public class ReturnStatementNode implements StatementNode {
-    private ExpressionNode expression;
+  private ExpressionNode expression;
 }

@@ -1,8 +1,7 @@
 package x1;
 
-import x1.model.*;
-
 import java.io.IOException;
+import x1.model.*;
 
 public class Parser {
   private final Lexer lexer;
@@ -21,42 +20,12 @@ public class Parser {
 
   private CompilationUnitNode compilationUnit() throws IOException {
     CompilationUnitNode node = new CompilationUnitNode();
-    if (currentToken.getType() == TokenType.PACKAGE) {
-      node.setPackageStatement(packageStatement());
-    }
-    while (currentToken.getType() == TokenType.IMPORT) {
-      node.addImportStatement(importStatement());
-    }
     while (currentToken.getType() == TokenType.TYPE) {
       node.addTypeDeclaration(typeDeclaration());
     }
     while (currentToken.getType() == TokenType.FUNCTION) {
       node.addMethodDeclaration(methodDeclaration());
     }
-    return node;
-  }
-
-  private PackageNode packageStatement() throws IOException {
-    PackageNode node = new PackageNode();
-    match(TokenType.PACKAGE);
-    node.setPackageName(packageName());
-    return node;
-  }
-
-  private PackageNameNode packageName() throws IOException {
-    PackageNameNode node = new PackageNameNode();
-    node.addIdentifier(identifier());
-    while (currentToken.getType() == TokenType.DOT) {
-      match(TokenType.DOT);
-      node.addIdentifier(identifier());
-    }
-    return node;
-  }
-
-  private ImportNode importStatement() throws IOException {
-    ImportNode node = new ImportNode();
-    match(TokenType.IMPORT);
-    node.setPackageName(packageName());
     return node;
   }
 
@@ -279,7 +248,15 @@ public class Parser {
     if (currentToken.getType() == expected) {
       currentToken = lexer.nextToken();
     } else {
-      throw new Error("Unexpected token: " + currentToken.getType() + " expected: " + expected + " at " + lexer.getLine() + ":" + lexer.getColumn());
+      throw new Error(
+          "Unexpected token: "
+              + currentToken.getType()
+              + " expected: "
+              + expected
+              + " at "
+              + lexer.getLine()
+              + ":"
+              + lexer.getColumn());
     }
   }
 }

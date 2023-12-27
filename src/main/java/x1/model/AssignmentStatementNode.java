@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class AssignmentStatementNode implements StatementNode {
-    private IdentifierNode identifier;
-    private ExpressionNode expression;
+  private IdentifierNode identifier;
+  private ExpressionNode expression;
 }
