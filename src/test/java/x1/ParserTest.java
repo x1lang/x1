@@ -1,13 +1,14 @@
 package x1;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
+import x1.model.*;
 
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Objects;
-import org.junit.jupiter.api.Test;
-import x1.model.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ParserTest {
 
