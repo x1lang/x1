@@ -1,13 +1,14 @@
 package x1;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
+import x1.model.*;
 
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Objects;
-import org.junit.jupiter.api.Test;
-import x1.model.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ParserTest {
 
@@ -109,7 +110,18 @@ class ParserTest {
                                       new IdentifierNode(new Token(TokenType.IDENTIFIER, "Int")),
                                       false),
                                   new IdentifierNode(new Token(TokenType.IDENTIFIER, "y")),
-                                  new BlockNode(Collections.emptyList())),
+                                  new BlockNode(
+                                      Collections.singletonList(
+                                          new AssignmentStatementNode(
+                                              new IdentifierNode(
+                                                  new Token(TokenType.IDENTIFIER, "v")),
+                                              new BinaryExpressionNode(
+                                                  new IdentifierNode(
+                                                      new Token(TokenType.IDENTIFIER, "v")),
+                                                  new BinaryOperatorNode(
+                                                      new Token(TokenType.PLUS, "+")),
+                                                  new IdentifierNode(
+                                                      new Token(TokenType.IDENTIFIER, "x"))))))),
                               new ReturnStatementNode(
                                   new IdentifierNode(new Token(TokenType.IDENTIFIER, "v"))))))));
       assertEquals(expected, compilationUnitNode);

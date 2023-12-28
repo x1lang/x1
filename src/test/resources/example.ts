@@ -6,6 +6,7 @@ function sum(v: number, n: number): number {
   }
   let y: number[] = [1, 2];
   for (let x of y) {
+    v = v + x;
   }
   return v;
 }

@@ -6,6 +6,7 @@ public int sum(int v, int n) {
   }
   int[] y = new int[]{1, 2};
   for (int x : y) {
+    v = v + x;
   }
   return v;
 }

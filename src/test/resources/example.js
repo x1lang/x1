@@ -6,6 +6,7 @@ function sum(v, n) {
   }
   let  y = [1, 2];
   for (let x of y) {
+    v = v + x;
   }
   return v;
 }

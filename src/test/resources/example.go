@@ -6,6 +6,7 @@ func sum(v int, n int) int {
   }
   y := []int{1, 2};
   for x := range y {
+    v = v + x;
   }
   return v;
 }

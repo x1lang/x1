@@ -6,6 +6,7 @@ function sum(v: Int, n: Int): Int {
   }
   var y:[]Int = []Int [1,2]
   foreach (x:Int; y) {
+    v = + v x
   }
   return v
 }

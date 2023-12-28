@@ -7,6 +7,7 @@ def sum(v, n):
     i = i + 1
   y = [1, 2]
   for x in y:
+    v = v + x
 
   return v
 
