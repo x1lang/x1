@@ -15,8 +15,8 @@ Example:
 ```x1
 
 function sum(v:Int, n:Int) {
-  for (var i:Int = 0; i < n; i = + i 1) {
-    if (== % i 2 0) {
+  for (var i:Int = 0; i < n; i = i + 1) {
+    if (i % 2 == 0) {
       v = v + i
     }
   }

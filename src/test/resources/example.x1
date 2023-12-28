@@ -1,12 +1,12 @@
 function sum(v: Int, n: Int): Int {
-  for (var i:Int = 0; < i n; i = + i 1) {
-    if (== % i 2 0) {
-      v = + v i
+  for (var i:Int = 0; < i n; i = i + 1) {
+    if (i % 2 == 0) {
+      v = v + i
     }
   }
   var y:[]Int = []Int [1,2]
   foreach (x:Int; y) {
-    v = + v x
+    v = v + x
   }
   return v
 }

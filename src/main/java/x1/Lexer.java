@@ -2,7 +2,9 @@ package x1;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Deque;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import lombok.Getter;
 import x1.model.Token;
@@ -27,6 +29,7 @@ public class Lexer {
   }
 
   private final InputStream in;
+  private final Deque<Token> tokenStack = new LinkedList<>();
   private int currentChar;
   @Getter private int line = 1;
   @Getter private int column = 1;
@@ -37,6 +40,10 @@ public class Lexer {
   }
 
   Token nextToken() throws IOException {
+    if (!tokenStack.isEmpty()) {
+      return tokenStack.pop();
+    }
+
     while (Character.isWhitespace(currentChar)) {
       consume();
     }
@@ -154,6 +161,16 @@ public class Lexer {
         throw new IllegalStateException(
             "Invalid character: " + (char) currentChar + " at " + line + ":" + column);
     }
+  }
+
+  void pushBack(Token token) {
+    tokenStack.push(token);
+  }
+
+  Token lookAhead() throws IOException {
+    Token token = nextToken();
+    pushBack(token);
+    return token;
   }
 
   private void consume() throws IOException {

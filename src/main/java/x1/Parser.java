@@ -2,7 +2,9 @@ package x1;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Stack;
 import x1.model.*;
 
 public class Parser {
@@ -194,68 +196,103 @@ public class Parser {
     return new ReturnStatementNode(null);
   }
 
+  /**
+   * Parse the expression using the shunting-yard algorithm which is a method for parsing
+   * mathematical expressions specified in infix notation.
+   */
   private ExpressionNode expression() throws IOException {
-    switch (peek()) {
-      case NUMBER:
-      case TRUE:
-      case FALSE:
-      case STRING:
-        return literal();
-      case IDENTIFIER:
-        return identifier();
-      case LBRACKET:
-        return arrayExpression();
-      case LPAREN:
-        match(TokenType.LPAREN);
-        ExpressionNode expression = expression();
-        match(TokenType.RPAREN);
-        return new ParenExpressionNode(expression);
-      case MINUS:
-      case NOT:
-        return unaryExpression();
-      default:
-        return binaryExpression();
+    Stack<ExpressionNode> outputQueue = new Stack<>();
+    Stack<Token> operatorStack = new Stack<>();
+
+    while (isOperand(currentToken)
+        || isOperator(currentToken)
+        || currentToken.getType() == TokenType.LPAREN
+        || currentToken.getType() == TokenType.LBRACKET) {
+
+      if (isOperand(currentToken)) {
+        if (currentToken.getType() == TokenType.IDENTIFIER) {
+          outputQueue.push(new IdentifierNode(currentToken));
+        } else {
+          outputQueue.push(new LiteralNode(currentToken));
+        }
+        currentToken = lexer.nextToken();
+        // is it an array creation
+      } else if (currentToken.getType() == TokenType.LBRACKET) {
+        TypeNode type = type();
+        match(TokenType.LBRACKET);
+        List<ExpressionNode> expressions = new ArrayList<>();
+        expressions.add(expression());
+        while (peek() == TokenType.COMMA) {
+          match(TokenType.COMMA);
+          expressions.add(expression());
+        }
+        match(TokenType.RBRACKET);
+        outputQueue.push(new ArrayExpressionNode(type, expressions));
+      } else if (isOperator(currentToken)) {
+        while (!operatorStack.isEmpty() && hasPrecedence(currentToken, operatorStack.peek())) {
+          Token operator = operatorStack.pop();
+          ExpressionNode right = outputQueue.pop();
+          ExpressionNode left = outputQueue.pop();
+          outputQueue.push(new BinaryExpressionNode(left, new BinaryOperatorNode(operator), right));
+        }
+        operatorStack.push(currentToken);
+        currentToken = lexer.nextToken();
+      } else if (currentToken.getType() == TokenType.LPAREN) {
+        operatorStack.push(currentToken);
+        currentToken = lexer.nextToken();
+      } else if (currentToken.getType() == TokenType.RPAREN) {
+        while (operatorStack.peek().getType() != TokenType.LPAREN) {
+          Token operator = operatorStack.pop();
+          ExpressionNode right = outputQueue.pop();
+          ExpressionNode left = outputQueue.pop();
+          outputQueue.push(new BinaryExpressionNode(left, new BinaryOperatorNode(operator), right));
+        }
+        Token token = operatorStack.pop(); // Discard the left parenthesis
+        if (token.getType() != TokenType.LPAREN) {
+          throw new RuntimeException("Invalid token: " + token);
+        }
+        currentToken = lexer.nextToken();
+      }
     }
-  }
-
-  private ExpressionNode arrayExpression() throws IOException {
-    TypeNode type = type();
-    match(TokenType.LBRACKET);
-    List<ExpressionNode> expressions = new ArrayList<>();
-    expressions.add(expression());
-    while (peek() == TokenType.COMMA) {
-      match(TokenType.COMMA);
-      expressions.add(expression());
+    while (!operatorStack.isEmpty()) {
+      Token operator = operatorStack.pop();
+      ExpressionNode right = outputQueue.pop();
+      ExpressionNode left = outputQueue.pop();
+      outputQueue.push(new BinaryExpressionNode(left, new BinaryOperatorNode(operator), right));
     }
-    match(TokenType.RBRACKET);
-    return new ArrayExpressionNode(type, expressions);
+
+    return outputQueue.pop();
   }
 
-  private LiteralNode literal() throws IOException {
-    Token token = currentToken;
-    match(peek());
-    return new LiteralNode(token);
+  private boolean isOperand(Token token) {
+    return EnumSet.of(TokenType.NUMBER, TokenType.IDENTIFIER, TokenType.TRUE, TokenType.FALSE)
+        .contains(token.getType());
   }
 
-  private BinaryExpressionNode binaryExpression() throws IOException {
-    BinaryOperatorNode operator = binaryOperator();
-    return new BinaryExpressionNode(expression(), operator, expression());
+  private boolean isOperator(Token token) {
+    return EnumSet.of(
+            TokenType.PLUS,
+            TokenType.MINUS,
+            TokenType.MULTIPLY,
+            TokenType.DIVIDE,
+            TokenType.AND,
+            TokenType.OR,
+            TokenType.MODULO,
+            TokenType.EQUAL_EQUAL,
+            TokenType.NOT_EQUAL,
+            TokenType.LESS,
+            TokenType.LESS_EQUAL,
+            TokenType.GREATER,
+            TokenType.GREATER_EQUAL)
+        .contains(token.getType());
   }
 
-  private BinaryOperatorNode binaryOperator() throws IOException {
-    Token token = currentToken;
-    match(peek());
-    return new BinaryOperatorNode(token);
-  }
-
-  private UnaryExpressionNode unaryExpression() throws IOException {
-    return new UnaryExpressionNode(unaryOperator(), expression());
-  }
-
-  private UnaryOperatorNode unaryOperator() throws IOException {
-    Token token = currentToken;
-    match(peek());
-    return new UnaryOperatorNode(token);
+  private boolean hasPrecedence(Token token1, Token token2) {
+    if (token2.getType() == TokenType.LPAREN || token2.getType() == TokenType.RPAREN) {
+      return false;
+    }
+    return (token1.getType() != TokenType.MULTIPLY && token1.getType() != TokenType.DIVIDE)
+        || (token2.getType() != TokenType.PLUS && token2.getType() != TokenType.MINUS);
   }
 
   private IdentifierNode identifier() throws IOException {
