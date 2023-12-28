@@ -2,9 +2,15 @@ package x1;
 
 import x1.model.*;
 
-public class JavaCodeGenerator implements NodeVisitor {
+public class JavaCodeGenerator implements NodeVisitor, CodeGenerator {
   private final StringBuilder builder = new StringBuilder();
 
+  @Override
+  public String getLanguage() {
+    return "java";
+  }
+
+  @Override
   public String generate(Node node) {
     node.accept(this);
     return builder.toString();

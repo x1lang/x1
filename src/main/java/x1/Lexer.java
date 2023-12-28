@@ -13,6 +13,7 @@ public class Lexer {
 
   static {
     KEYWORDS = new HashMap<>();
+    KEYWORDS.put("this", TokenType.THIS);
     KEYWORDS.put("type", TokenType.TYPE);
     KEYWORDS.put("function", TokenType.FUNCTION);
     KEYWORDS.put("var", TokenType.VAR);
@@ -53,6 +54,9 @@ public class Lexer {
     }
 
     switch (currentChar) {
+      case '.':
+        consume();
+        return new Token(TokenType.DOT, ".");
       case ';':
         consume();
         return new Token(TokenType.SEMICOLON, ";");
@@ -163,7 +167,7 @@ public class Lexer {
 
   private Token identifier() throws IOException {
     StringBuilder buffer = new StringBuilder();
-    while (Character.isLetterOrDigit(currentChar)) {
+    while (Character.isLetterOrDigit(currentChar) || currentChar == '.') {
       buffer.append((char) currentChar);
       consume();
     }

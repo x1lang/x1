@@ -45,4 +45,6 @@ public enum TokenType {
   RBRACKET,
   LPAREN,
   RPAREN,
+  THIS,
+  DOT,
 }

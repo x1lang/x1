@@ -113,9 +113,6 @@ class ParserTest {
                               new ReturnStatementNode(
                                   new IdentifierNode(new Token(TokenType.IDENTIFIER, "v"))))))));
       assertEquals(expected, compilationUnitNode);
-      String generate = new JavaCodeGenerator().generate(compilationUnitNode);
-
-      System.out.println(generate);
     }
   }
 }
