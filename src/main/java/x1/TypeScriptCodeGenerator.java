@@ -15,12 +15,6 @@ public class TypeScriptCodeGenerator extends JavascriptCodeGenerator {
   }
 
   @Override
-  IdentifierNode typeIdentifier(IdentifierNode identifier) {
-    String text = type(identifier.getToken().getText());
-    return new IdentifierNode(new Token(TokenType.IDENTIFIER, text));
-  }
-
-  @Override
   String type(String text) {
     switch (text) {
       case "Int":
@@ -31,11 +25,6 @@ public class TypeScriptCodeGenerator extends JavascriptCodeGenerator {
         return "void";
     }
     return text;
-  }
-
-  @Override
-  TypeNode type(TypeNode type) {
-    return new TypeNode(typeIdentifier(type.getIdentifier()), type.isArray());
   }
 
   @Override

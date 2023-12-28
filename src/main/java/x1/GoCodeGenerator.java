@@ -2,16 +2,15 @@ package x1;
 
 import x1.model.*;
 
-public class JavaCodeGenerator extends CLikeCodeGenerator {
-
+public class GoCodeGenerator extends CLikeCodeGenerator {
   @Override
   public String getLanguage() {
-    return "java";
+    return "go";
   }
 
   @Override
   public String getExtension() {
-    return "java";
+    return "go";
   }
 
   @Override
@@ -29,39 +28,33 @@ public class JavaCodeGenerator extends CLikeCodeGenerator {
 
   @Override
   public void visit(TypeDeclarationNode node) {
-    append("class ");
+    append("type ");
     node.getIdentifier().accept(this);
-    append(" {\n");
+    append(" struct {\n");
     indent++;
-    node.getFieldDeclarations()
-        .forEach(
-            fieldDeclaration -> {
-              indent();
-              fieldDeclaration.accept(this);
-              append(";\n");
-            });
-    indent();
+    node.getFieldDeclarations().forEach(fieldDeclaration -> fieldDeclaration.accept(this));
+    indent--;
     indent();
     append("}");
   }
 
   @Override
   public void visit(FieldDeclarationNode node) {
-    type(node.getType()).accept(this);
-    append(" ");
+
     node.getIdentifier().accept(this);
-    append(";\n");
+    append(" ");
+    node.getType().accept(this);
   }
 
   @Override
   public void visit(MethodDeclarationNode node) {
-    append("public ");
-    type(node.getType()).accept(this);
-    append(" ");
+    append("func ");
     node.getIdentifier().accept(this);
     append("(");
     node.getParameterList().accept(this);
-    append(") {\n");
+    append(") ");
+    node.getType().accept(this);
+    append(" {\n");
     indent++;
     node.getBlock().accept(this);
     indent--;
@@ -71,41 +64,23 @@ public class JavaCodeGenerator extends CLikeCodeGenerator {
 
   @Override
   public void visit(ParameterNode node) {
-    node.getType().accept(this);
-    append(" ");
     node.getIdentifier().accept(this);
+    append(" ");
+    node.getType().accept(this);
   }
 
   @Override
   public void visit(TypeNode node) {
-    typeIdentifier(node.getIdentifier()).accept(this);
     if (node.isArray()) {
       append("[]");
     }
-  }
-
-  @Override
-  public void visit(ForEachDeclarationNode node) {
-    append("for (");
-    node.getType().accept(this);
-    append(" ");
-    node.getIdentifier().accept(this);
-    append(" : ");
-    node.getExpression().accept(this);
-    append(") {\n");
-    indent++;
-    node.getBlock().accept(this);
-    indent--;
-    indent();
-    append("}");
+    typeIdentifier(node.getIdentifier()).accept(this);
   }
 
   @Override
   public void visit(VariableDeclarationNode node) {
-    type(node.getType()).accept(this);
-    append(" ");
     node.getIdentifier().accept(this);
-    append(" = ");
+    append(" := ");
     node.getExpression().accept(this);
   }
 
@@ -117,9 +92,60 @@ public class JavaCodeGenerator extends CLikeCodeGenerator {
   }
 
   @Override
+  public void visit(ForDeclarationNode node) {
+    append("for ");
+    node.getVariableDeclaration().accept(this);
+    append("; ");
+    node.getExpression().accept(this);
+    append("; ");
+    node.getAssignmentStatement().accept(this);
+    append(" {\n");
+    indent++;
+    node.getBlock().accept(this);
+    indent--;
+    indent();
+    append("}");
+  }
+
+  @Override
+  public void visit(IfStatementNode node) {
+    indent();
+    append("if ");
+    node.getExpression().accept(this);
+    append(" {\n");
+    indent++;
+    node.getBlock().accept(this);
+    indent--;
+    indent();
+    append("}");
+    if (node.getElseBlock() != null) {
+      indent();
+      append(" else {\n");
+      indent++;
+      node.getElseBlock().accept(this);
+      indent--;
+      indent();
+      append("}");
+    }
+  }
+
+  @Override
+  public void visit(ForEachDeclarationNode node) {
+    append("for ");
+    node.getIdentifier().accept(this);
+    append(" := range ");
+    node.getExpression().accept(this);
+    append(" {\n");
+    indent++;
+    node.getBlock().accept(this);
+    indent--;
+    indent();
+    append("}");
+  }
+
+  @Override
   public void visit(ArrayExpressionNode node) {
-    append("new ");
-    type(node.getType()).accept(this);
+    node.getType().accept(this);
     append("{");
     for (int i = 0; i < node.getExpressions().size(); i++) {
       if (i > 0) {

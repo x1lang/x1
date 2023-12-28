@@ -15,21 +15,6 @@ public class JavascriptCodeGenerator extends CLikeCodeGenerator {
   }
 
   @Override
-  IdentifierNode typeIdentifier(IdentifierNode identifier) {
-    return identifier;
-  }
-
-  @Override
-  String type(String text) {
-    return text;
-  }
-
-  @Override
-  TypeNode type(TypeNode type) {
-    return type;
-  }
-
-  @Override
   public void visit(TypeDeclarationNode node) {}
 
   @Override

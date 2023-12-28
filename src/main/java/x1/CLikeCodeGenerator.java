@@ -127,11 +127,18 @@ abstract class CLikeCodeGenerator implements NodeVisitor, CodeGenerator {
     append(node.getToken().getText());
   }
 
-  abstract IdentifierNode typeIdentifier(IdentifierNode identifier);
+  String type(String text) {
+    return text;
+  }
 
-  abstract String type(String text);
+  IdentifierNode typeIdentifier(IdentifierNode identifier) {
+    String text = type(identifier.getToken().getText());
+    return new IdentifierNode(new Token(TokenType.IDENTIFIER, text));
+  }
 
-  abstract TypeNode type(TypeNode type);
+  TypeNode type(TypeNode type) {
+    return new TypeNode(typeIdentifier(type.getIdentifier()), type.isArray());
+  }
 
   void append(String text) {
     builder.append(text);

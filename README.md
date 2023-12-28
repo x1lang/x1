@@ -1,7 +1,6 @@
 # X1
 
-X1 is a syntax for expressing simple programs in a language-agnostic way. Because it must be able to specify
-code in a way that can be turned into other programming languages.
+X1 is a syntax for expressing simple code in a target language-agnostic way. Code written X1 are converted into the target language (e.g. Java, JavaScript, Typescript) before compilation.
 
 - Expressions
 - Conditionals
