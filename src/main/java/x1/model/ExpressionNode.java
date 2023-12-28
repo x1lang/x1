@@ -1,3 +1,3 @@
 package x1.model;
 
-public interface ExpressionNode {}
+public interface ExpressionNode extends Node {}

@@ -1,14 +1,13 @@
 package x1;
 
-import org.junit.jupiter.api.Test;
-import x1.model.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Objects;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
+import x1.model.*;
 
 class ParserTest {
 
@@ -97,16 +96,26 @@ class ParserTest {
                                       new IdentifierNode(new Token(TokenType.IDENTIFIER, "Int")),
                                       true),
                                   new ArrayExpressionNode(
+                                      new TypeNode(
+                                          new IdentifierNode(
+                                              new Token(TokenType.IDENTIFIER, "Int")),
+                                          true),
                                       Arrays.asList(
                                           new LiteralNode(new Token(TokenType.NUMBER, "1")),
                                           new LiteralNode(new Token(TokenType.NUMBER, "2"))))),
                               new ForEachStatementNode(
                                   new IdentifierNode(new Token(TokenType.IDENTIFIER, "x")),
+                                  new TypeNode(
+                                      new IdentifierNode(new Token(TokenType.IDENTIFIER, "Int")),
+                                      false),
                                   new IdentifierNode(new Token(TokenType.IDENTIFIER, "y")),
                                   new BlockNode(Collections.emptyList())),
                               new ReturnStatementNode(
                                   new IdentifierNode(new Token(TokenType.IDENTIFIER, "v"))))))));
       assertEquals(expected, compilationUnitNode);
+      String generate = new JavaCodeGenerator().generate(compilationUnitNode);
+
+      System.out.println(generate);
     }
   }
 }

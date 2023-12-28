@@ -125,10 +125,12 @@ public class Parser {
     match(TokenType.LPAREN);
     IdentifierNode identifier = identifier();
     match(TokenType.COLON);
+    TypeNode type = type();
+    match(TokenType.SEMICOLON);
     ExpressionNode expression = expression();
     match(TokenType.RPAREN);
     BlockNode block = block();
-    return new ForEachStatementNode(identifier, expression, block);
+    return new ForEachStatementNode(identifier, type, expression, block);
   }
 
   private VariableDeclarationNode variableDeclaration() throws IOException {
@@ -217,6 +219,7 @@ public class Parser {
   }
 
   private ExpressionNode arrayExpression() throws IOException {
+    TypeNode type = type();
     match(TokenType.LBRACKET);
     List<ExpressionNode> expressions = new ArrayList<>();
     expressions.add(expression());
@@ -225,7 +228,7 @@ public class Parser {
       expressions.add(expression());
     }
     match(TokenType.RBRACKET);
-    return new ArrayExpressionNode(expressions);
+    return new ArrayExpressionNode(type, expressions);
   }
 
   private LiteralNode literal() throws IOException {
