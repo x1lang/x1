@@ -1,13 +1,12 @@
 package x1;
 
-import org.junit.jupiter.api.Test;
-import x1.model.CompilationUnitNode;
-
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.ServiceLoader;
+import org.junit.jupiter.api.Test;
+import x1.model.CompilationUnitNode;
 
 class CodeGeneratorTest {
 
@@ -24,7 +23,7 @@ class CodeGeneratorTest {
         String generate = codeGenerator.generate(compilationUnitNode);
 
         Files.write(
-            Paths.get("src/test/resources/example." + codeGenerator.getLanguage()),
+            Paths.get("src/test/resources/example." + codeGenerator.getExtension()),
             generate.getBytes());
       }
     }

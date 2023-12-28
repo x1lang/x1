@@ -19,7 +19,23 @@ public interface NodeVisitor {
 
   void visit(BlockNode node);
 
-  void visit(StatementNode node);
+  default void visit(StatementNode node) {
+    if (node instanceof ForDeclarationNode) {
+      visit((ForDeclarationNode) node);
+    } else if (node instanceof ForEachStatementNode) {
+      visit((ForEachStatementNode) node);
+    } else if (node instanceof VariableDeclarationNode) {
+      visit((VariableDeclarationNode) node);
+    } else if (node instanceof AssignmentStatementNode) {
+      visit((AssignmentStatementNode) node);
+    } else if (node instanceof IfStatementNode) {
+      visit((IfStatementNode) node);
+    } else if (node instanceof ReturnStatementNode) {
+      visit((ReturnStatementNode) node);
+    } else {
+      throw new RuntimeException("Unknown statement node: " + node);
+    }
+  }
 
   void visit(ForDeclarationNode node);
 
