@@ -2,7 +2,7 @@ package x1;
 
 import x1.model.*;
 
-public class PythonCodeGenerator extends CLikeCodeGenerator {
+public class PythonCodeGenerator extends AbstractCodeGenerator {
 
   @Override
   public String getLanguage() {
@@ -74,6 +74,16 @@ public class PythonCodeGenerator extends CLikeCodeGenerator {
     indent++;
     node.getBlock().accept(this);
     indent--;
+  }
+
+  @Override
+  public void visit(ParameterListNode node) {
+    for (int i = 0; i < node.getParameters().size(); i++) {
+      if (i > 0) {
+        append(", ");
+      }
+      node.getParameters().get(i).accept(this);
+    }
   }
 
   @Override

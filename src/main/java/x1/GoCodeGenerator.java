@@ -23,7 +23,7 @@ public class GoCodeGenerator extends CLikeCodeGenerator {
       case "Void":
         return "void";
     }
-    return text;
+    return super.type(text);
   }
 
   @Override
