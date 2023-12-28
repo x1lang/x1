@@ -22,8 +22,8 @@ public interface NodeVisitor {
   default void visit(StatementNode node) {
     if (node instanceof ForDeclarationNode) {
       visit((ForDeclarationNode) node);
-    } else if (node instanceof ForEachStatementNode) {
-      visit((ForEachStatementNode) node);
+    } else if (node instanceof ForEachDeclarationNode) {
+      visit((ForEachDeclarationNode) node);
     } else if (node instanceof VariableDeclarationNode) {
       visit((VariableDeclarationNode) node);
     } else if (node instanceof AssignmentStatementNode) {
@@ -39,7 +39,7 @@ public interface NodeVisitor {
 
   void visit(ForDeclarationNode node);
 
-  void visit(ForEachStatementNode node);
+  void visit(ForEachDeclarationNode node);
 
   void visit(VariableDeclarationNode node);
 

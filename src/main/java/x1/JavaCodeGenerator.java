@@ -4,6 +4,7 @@ import x1.model.*;
 
 public class JavaCodeGenerator implements NodeVisitor, CodeGenerator {
   private final StringBuilder builder = new StringBuilder();
+  private int indent = 0;
 
   @Override
   public String getLanguage() {
@@ -19,6 +20,12 @@ public class JavaCodeGenerator implements NodeVisitor, CodeGenerator {
   public String generate(Node node) {
     node.accept(this);
     return builder.toString();
+  }
+
+  private void indent() {
+    for (int i = 0; i < indent; i++) {
+      builder.append("  "); // Two spaces for each indent level
+    }
   }
 
   private static IdentifierNode javaTypeIdentifier(IdentifierNode identifier) {
@@ -68,6 +75,7 @@ public class JavaCodeGenerator implements NodeVisitor, CodeGenerator {
 
   @Override
   public void visit(MethodDeclarationNode node) {
+    indent();
     append("public ");
     javaType(node.getType()).accept(this);
     append(" ");
@@ -75,7 +83,10 @@ public class JavaCodeGenerator implements NodeVisitor, CodeGenerator {
     append("(");
     node.getParameterList().accept(this);
     append(") {\n");
+    indent++;
     node.getBlock().accept(this);
+    indent--;
+    indent();
     append("}\n");
   }
 
@@ -106,7 +117,13 @@ public class JavaCodeGenerator implements NodeVisitor, CodeGenerator {
 
   @Override
   public void visit(BlockNode node) {
-    node.getStatements().forEach(statement -> statement.accept(this));
+    node.getStatements()
+        .forEach(
+            statement -> {
+              indent();
+              statement.accept(this);
+              append("\n");
+            });
   }
 
   @Override
@@ -117,12 +134,15 @@ public class JavaCodeGenerator implements NodeVisitor, CodeGenerator {
     append("; ");
     node.getAssignmentStatement().accept(this);
     append(") {\n");
+    indent++;
     node.getBlock().accept(this);
-    append("}\n");
+    indent--;
+    indent();
+    append("}");
   }
 
   @Override
-  public void visit(ForEachStatementNode node) {
+  public void visit(ForEachDeclarationNode node) {
     append("for (");
     node.getType().accept(this);
     append(" ");
@@ -130,8 +150,10 @@ public class JavaCodeGenerator implements NodeVisitor, CodeGenerator {
     append(" : ");
     node.getExpression().accept(this);
     append(") {\n");
+    indent++;
     node.getBlock().accept(this);
-    append("}\n");
+    append("}");
+    indent--;
   }
 
   @Override
@@ -141,7 +163,7 @@ public class JavaCodeGenerator implements NodeVisitor, CodeGenerator {
     node.getIdentifier().accept(this);
     append(" = ");
     node.getExpression().accept(this);
-    append(";\n");
+    append(";");
   }
 
   @Override
@@ -149,7 +171,7 @@ public class JavaCodeGenerator implements NodeVisitor, CodeGenerator {
     node.getIdentifier().accept(this);
     append(" = ");
     node.getExpression().accept(this);
-    append(";\n");
+    append(";");
   }
 
   @Override
@@ -157,12 +179,19 @@ public class JavaCodeGenerator implements NodeVisitor, CodeGenerator {
     append("if (");
     node.getExpression().accept(this);
     append(") {\n");
+    indent++;
     node.getBlock().accept(this);
-    append("}\n");
+    indent--;
+    indent();
+    append("}");
     if (node.getElseBlock() != null) {
-      append("else {\n");
+      indent();
+      append(" else {\n");
+      indent++;
       node.getElseBlock().accept(this);
-      append("}\n");
+      indent--;
+      indent();
+      append("}");
     }
   }
 
@@ -170,7 +199,7 @@ public class JavaCodeGenerator implements NodeVisitor, CodeGenerator {
   public void visit(ReturnStatementNode node) {
     append("return ");
     node.getExpression().accept(this);
-    append(";\n");
+    append(";");
   }
 
   @Override

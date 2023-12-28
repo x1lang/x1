@@ -4,6 +4,7 @@ import x1.model.*;
 
 public class JavascriptCodeGenerator implements NodeVisitor, CodeGenerator {
   private final StringBuilder builder = new StringBuilder();
+  private int indent = 0;
 
   @Override
   public String getLanguage() {
@@ -19,6 +20,12 @@ public class JavascriptCodeGenerator implements NodeVisitor, CodeGenerator {
   public String generate(Node node) {
     node.accept(this);
     return builder.toString();
+  }
+
+  private void indent() {
+    for (int i = 0; i < indent; i++) {
+      builder.append("  "); // Two spaces for each indent level
+    }
   }
 
   @Override
@@ -45,8 +52,11 @@ public class JavascriptCodeGenerator implements NodeVisitor, CodeGenerator {
     append(" = function(");
     node.getParameterList().accept(this);
     append(") {\n");
+    indent++;
     node.getBlock().accept(this);
-    append("}\n");
+    indent();
+    append("}");
+    indent--;
   }
 
   @Override
@@ -74,13 +84,15 @@ public class JavascriptCodeGenerator implements NodeVisitor, CodeGenerator {
     node.getStatements()
         .forEach(
             statement -> {
+              indent();
               statement.accept(this);
               // not all statements need a semicolon
               if (!(statement instanceof ForDeclarationNode
-                  || statement instanceof ForEachStatementNode
+                  || statement instanceof ForEachDeclarationNode
                   || statement instanceof IfStatementNode)) {
-                append(";\n");
+                append(";");
               }
+              append("\n");
             });
   }
 
@@ -93,19 +105,23 @@ public class JavascriptCodeGenerator implements NodeVisitor, CodeGenerator {
     append("; ");
     node.getAssignmentStatement().accept(this);
     append(") {\n");
+    indent++;
     node.getBlock().accept(this);
-    append("}\n");
+    indent--;
+    indent();
+    append("}");
   }
 
   @Override
-  public void visit(ForEachStatementNode node) {
+  public void visit(ForEachDeclarationNode node) {
     append("for (let ");
     node.getIdentifier().accept(this);
     append(" of ");
     node.getExpression().accept(this);
     append(") {\n");
     node.getBlock().accept(this);
-    append("}\n");
+    indent();
+    append("}");
   }
 
   @Override
@@ -131,12 +147,18 @@ public class JavascriptCodeGenerator implements NodeVisitor, CodeGenerator {
     append("if (");
     node.getExpression().accept(this);
     append(") {\n");
+    indent++;
     node.getBlock().accept(this);
-    append("}\n");
+    indent--;
+    indent();
+    append("}");
     if (node.getElseBlock() != null) {
       append("else {\n");
+      indent++;
       node.getElseBlock().accept(this);
-      append("}\n");
+      indent--;
+      indent();
+      append("}");
     }
   }
 

@@ -4,7 +4,7 @@ import lombok.Value;
 import x1.NodeVisitor;
 
 @Value
-public class ForEachStatementNode implements StatementNode {
+public class ForEachDeclarationNode implements StatementNode {
   IdentifierNode identifier;
   TypeNode type;
   ExpressionNode expression;

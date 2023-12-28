@@ -103,7 +103,7 @@ class ParserTest {
                                       Arrays.asList(
                                           new LiteralNode(new Token(TokenType.NUMBER, "1")),
                                           new LiteralNode(new Token(TokenType.NUMBER, "2"))))),
-                              new ForEachStatementNode(
+                              new ForEachDeclarationNode(
                                   new IdentifierNode(new Token(TokenType.IDENTIFIER, "x")),
                                   new TypeNode(
                                       new IdentifierNode(new Token(TokenType.IDENTIFIER, "Int")),

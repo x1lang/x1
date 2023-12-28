@@ -130,7 +130,7 @@ public class Parser {
     ExpressionNode expression = expression();
     match(TokenType.RPAREN);
     BlockNode block = block();
-    return new ForEachStatementNode(identifier, type, expression, block);
+    return new ForEachDeclarationNode(identifier, type, expression, block);
   }
 
   private VariableDeclarationNode variableDeclaration() throws IOException {
