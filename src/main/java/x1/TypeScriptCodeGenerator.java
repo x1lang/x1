@@ -2,18 +2,18 @@ package x1;
 
 import x1.model.*;
 
-public class JavaCodeGenerator implements NodeVisitor, CodeGenerator {
+public class TypeScriptCodeGenerator implements NodeVisitor, CodeGenerator {
   private final StringBuilder builder = new StringBuilder();
   private int indent = 0;
 
   @Override
   public String getLanguage() {
-    return "java";
+    return "typescript";
   }
 
   @Override
   public String getExtension() {
-    return "java";
+    return "ts";
   }
 
   @Override
@@ -36,7 +36,7 @@ public class JavaCodeGenerator implements NodeVisitor, CodeGenerator {
   private static String type(String text) {
     switch (text) {
       case "Int":
-        return "int";
+        return "number";
       case "Boolean":
         return "boolean";
       case "Void":
@@ -68,28 +68,27 @@ public class JavaCodeGenerator implements NodeVisitor, CodeGenerator {
               fieldDeclaration.accept(this);
               append(";\n");
             });
-    indent();
+    indent--;
     indent();
     append("}");
   }
 
   @Override
   public void visit(FieldDeclarationNode node) {
-    type(node.getType()).accept(this);
-    append(" ");
     node.getIdentifier().accept(this);
-    append(";\n");
+    append(": ");
+    node.getType().accept(this);
   }
 
   @Override
   public void visit(MethodDeclarationNode node) {
-    append("public ");
-    type(node.getType()).accept(this);
-    append(" ");
+    append("function ");
     node.getIdentifier().accept(this);
     append("(");
     node.getParameterList().accept(this);
-    append(") {\n");
+    append("): ");
+    type(node.getType()).accept(this);
+    append(" {\n");
     indent++;
     node.getBlock().accept(this);
     indent--;
@@ -109,9 +108,9 @@ public class JavaCodeGenerator implements NodeVisitor, CodeGenerator {
 
   @Override
   public void visit(ParameterNode node) {
-    node.getType().accept(this);
-    append(" ");
     node.getIdentifier().accept(this);
+    append(": ");
+    type(node.getType()).accept(this);
   }
 
   @Override
@@ -156,11 +155,9 @@ public class JavaCodeGenerator implements NodeVisitor, CodeGenerator {
 
   @Override
   public void visit(ForEachDeclarationNode node) {
-    append("for (");
-    node.getType().accept(this);
-    append(" ");
+    append("for (let ");
     node.getIdentifier().accept(this);
-    append(" : ");
+    append(" of ");
     node.getExpression().accept(this);
     append(") {\n");
     indent++;
@@ -172,9 +169,10 @@ public class JavaCodeGenerator implements NodeVisitor, CodeGenerator {
 
   @Override
   public void visit(VariableDeclarationNode node) {
-    type(node.getType()).accept(this);
-    append(" ");
+    append("let ");
     node.getIdentifier().accept(this);
+    append(": ");
+    type(node.getType()).accept(this);
     append(" = ");
     node.getExpression().accept(this);
   }
@@ -220,16 +218,14 @@ public class JavaCodeGenerator implements NodeVisitor, CodeGenerator {
 
   @Override
   public void visit(ArrayExpressionNode node) {
-    append("new ");
-    type(node.getType()).accept(this);
-    append("{");
+    append("[");
     for (int i = 0; i < node.getExpressions().size(); i++) {
       if (i > 0) {
         append(", ");
       }
       node.getExpressions().get(i).accept(this);
     }
-    append("}");
+    append("]");
   }
 
   @Override
@@ -248,7 +244,13 @@ public class JavaCodeGenerator implements NodeVisitor, CodeGenerator {
 
   @Override
   public void visit(BinaryOperatorNode node) {
-    append(node.getToken().getText());
+    if (node.getToken().getText().equals("==")) {
+      append("===");
+    } else if (node.getToken().getText().equals("!=")) {
+      append("!==");
+    } else {
+      append(node.getToken().getText());
+    }
   }
 
   @Override

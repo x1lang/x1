@@ -28,6 +28,14 @@ public class JavascriptCodeGenerator implements NodeVisitor, CodeGenerator {
     }
   }
 
+  private static IdentifierNode typeIdentifier(IdentifierNode identifier) {
+    return identifier;
+  }
+
+  private TypeNode type(TypeNode type) {
+    return type;
+  }
+
   @Override
   public void visit(CompilationUnitNode node) {
     node.getTypeDeclarations().forEach(typeDeclaration -> typeDeclaration.accept(this));
@@ -35,21 +43,16 @@ public class JavascriptCodeGenerator implements NodeVisitor, CodeGenerator {
   }
 
   @Override
-  public void visit(TypeDeclarationNode node) {
-    // JavaScript does not have a direct equivalent of Java's classes
-  }
+  public void visit(TypeDeclarationNode node) {}
 
   @Override
-  public void visit(FieldDeclarationNode node) {
-    // JavaScript does not have a direct equivalent of Java's fields
-  }
+  public void visit(FieldDeclarationNode node) {}
 
   @Override
   public void visit(MethodDeclarationNode node) {
-    TypeNode type = node.getType();
-    new TypeNode(type.getIdentifier(), type.isArray()).accept(this);
+    append("function ");
     node.getIdentifier().accept(this);
-    append(" = function(");
+    append("(");
     node.getParameterList().accept(this);
     append(") {\n");
     indent++;
@@ -75,9 +78,7 @@ public class JavascriptCodeGenerator implements NodeVisitor, CodeGenerator {
   }
 
   @Override
-  public void visit(TypeNode node) {
-    // JavaScript does not have a direct equivalent of Java's types
-  }
+  public void visit(TypeNode node) {}
 
   @Override
   public void visit(BlockNode node) {
@@ -86,7 +87,6 @@ public class JavascriptCodeGenerator implements NodeVisitor, CodeGenerator {
             statement -> {
               indent();
               statement.accept(this);
-              // not all statements need a semicolon
               if (!(statement instanceof ForDeclarationNode
                   || statement instanceof ForEachDeclarationNode
                   || statement instanceof IfStatementNode)) {
@@ -119,7 +119,9 @@ public class JavascriptCodeGenerator implements NodeVisitor, CodeGenerator {
     append(" of ");
     node.getExpression().accept(this);
     append(") {\n");
+    indent++;
     node.getBlock().accept(this);
+    indent--;
     indent();
     append("}");
   }
@@ -127,8 +129,6 @@ public class JavascriptCodeGenerator implements NodeVisitor, CodeGenerator {
   @Override
   public void visit(VariableDeclarationNode node) {
     append("let ");
-    TypeNode type = node.getType();
-    new TypeNode(type.getIdentifier(), type.isArray()).accept(this);
     append(" ");
     node.getIdentifier().accept(this);
     append(" = ");
@@ -153,7 +153,8 @@ public class JavascriptCodeGenerator implements NodeVisitor, CodeGenerator {
     indent();
     append("}");
     if (node.getElseBlock() != null) {
-      append("else {\n");
+      indent();
+      append(" else {\n");
       indent++;
       node.getElseBlock().accept(this);
       indent--;
