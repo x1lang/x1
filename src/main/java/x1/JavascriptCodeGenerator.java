@@ -2,9 +2,7 @@ package x1;
 
 import x1.model.*;
 
-public class JavascriptCodeGenerator implements NodeVisitor, CodeGenerator {
-  private final StringBuilder builder = new StringBuilder();
-  private int indent = 0;
+public class JavascriptCodeGenerator extends CLikeCodeGenerator {
 
   @Override
   public String getLanguage() {
@@ -17,29 +15,18 @@ public class JavascriptCodeGenerator implements NodeVisitor, CodeGenerator {
   }
 
   @Override
-  public String generate(Node node) {
-    node.accept(this);
-    return builder.toString();
-  }
-
-  private void indent() {
-    for (int i = 0; i < indent; i++) {
-      builder.append("  "); // Two spaces for each indent level
-    }
-  }
-
-  private static IdentifierNode typeIdentifier(IdentifierNode identifier) {
+  IdentifierNode typeIdentifier(IdentifierNode identifier) {
     return identifier;
   }
 
-  private TypeNode type(TypeNode type) {
-    return type;
+  @Override
+  String type(String text) {
+    return text;
   }
 
   @Override
-  public void visit(CompilationUnitNode node) {
-    node.getTypeDeclarations().forEach(typeDeclaration -> typeDeclaration.accept(this));
-    node.getMethodDeclarations().forEach(methodDeclaration -> methodDeclaration.accept(this));
+  TypeNode type(TypeNode type) {
+    return type;
   }
 
   @Override
@@ -57,19 +44,9 @@ public class JavascriptCodeGenerator implements NodeVisitor, CodeGenerator {
     append(") {\n");
     indent++;
     node.getBlock().accept(this);
+    indent--;
     indent();
     append("}");
-    indent--;
-  }
-
-  @Override
-  public void visit(ParameterListNode node) {
-    for (int i = 0; i < node.getParameters().size(); i++) {
-      if (i > 0) {
-        append(", ");
-      }
-      node.getParameters().get(i).accept(this);
-    }
   }
 
   @Override
@@ -79,38 +56,6 @@ public class JavascriptCodeGenerator implements NodeVisitor, CodeGenerator {
 
   @Override
   public void visit(TypeNode node) {}
-
-  @Override
-  public void visit(BlockNode node) {
-    node.getStatements()
-        .forEach(
-            statement -> {
-              indent();
-              statement.accept(this);
-              if (!(statement instanceof ForDeclarationNode
-                  || statement instanceof ForEachDeclarationNode
-                  || statement instanceof IfStatementNode)) {
-                append(";");
-              }
-              append("\n");
-            });
-  }
-
-  @Override
-  public void visit(ForDeclarationNode node) {
-    append("for (");
-    node.getVariableDeclaration().accept(this);
-    append("; ");
-    node.getExpression().accept(this);
-    append("; ");
-    node.getAssignmentStatement().accept(this);
-    append(") {\n");
-    indent++;
-    node.getBlock().accept(this);
-    indent--;
-    indent();
-    append("}");
-  }
 
   @Override
   public void visit(ForEachDeclarationNode node) {
@@ -143,38 +88,6 @@ public class JavascriptCodeGenerator implements NodeVisitor, CodeGenerator {
   }
 
   @Override
-  public void visit(IfStatementNode node) {
-    append("if (");
-    node.getExpression().accept(this);
-    append(") {\n");
-    indent++;
-    node.getBlock().accept(this);
-    indent--;
-    indent();
-    append("}");
-    if (node.getElseBlock() != null) {
-      indent();
-      append(" else {\n");
-      indent++;
-      node.getElseBlock().accept(this);
-      indent--;
-      indent();
-      append("}");
-    }
-  }
-
-  @Override
-  public void visit(ReturnStatementNode node) {
-    append("return ");
-    node.getExpression().accept(this);
-  }
-
-  @Override
-  public void visit(ExpressionNode node) {
-    node.accept(this);
-  }
-
-  @Override
   public void visit(ArrayExpressionNode node) {
     append("[");
     for (int i = 0; i < node.getExpressions().size(); i++) {
@@ -187,20 +100,6 @@ public class JavascriptCodeGenerator implements NodeVisitor, CodeGenerator {
   }
 
   @Override
-  public void visit(LiteralNode node) {
-    append(node.getToken().getText());
-  }
-
-  @Override
-  public void visit(BinaryExpressionNode node) {
-    node.getLeftExpression().accept(this);
-    append(" ");
-    node.getOperator().accept(this);
-    append(" ");
-    node.getRightExpression().accept(this);
-  }
-
-  @Override
   public void visit(BinaryOperatorNode node) {
     if (node.getToken().getText().equals("==")) {
       append("===");
@@ -209,25 +108,5 @@ public class JavascriptCodeGenerator implements NodeVisitor, CodeGenerator {
     } else {
       append(node.getToken().getText());
     }
-  }
-
-  @Override
-  public void visit(UnaryExpressionNode node) {
-    node.getOperator().accept(this);
-    node.getExpression().accept(this);
-  }
-
-  @Override
-  public void visit(UnaryOperatorNode node) {
-    append(node.getToken().getText());
-  }
-
-  @Override
-  public void visit(IdentifierNode node) {
-    append(node.getToken().getText());
-  }
-
-  private void append(String text) {
-    builder.append(text);
   }
 }

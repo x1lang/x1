@@ -3,7 +3,11 @@ package x1;
 import x1.model.*;
 
 public interface NodeVisitor {
-  void visit(CompilationUnitNode node);
+
+  default void visit(CompilationUnitNode node) {
+    node.getTypeDeclarations().forEach(typeDeclaration -> typeDeclaration.accept(this));
+    node.getMethodDeclarations().forEach(methodDeclaration -> methodDeclaration.accept(this));
+  }
 
   void visit(TypeDeclarationNode node);
 
