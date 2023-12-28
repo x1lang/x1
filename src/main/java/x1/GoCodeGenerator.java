@@ -20,6 +20,8 @@ public class GoCodeGenerator extends CLikeCodeGenerator {
         return "int";
       case "Boolean":
         return "boolean";
+      case "String":
+        return "string";
       case "Void":
         return "void";
     }
@@ -32,7 +34,13 @@ public class GoCodeGenerator extends CLikeCodeGenerator {
     node.getIdentifier().accept(this);
     append(" struct {\n");
     indent++;
-    node.getFieldDeclarations().forEach(fieldDeclaration -> fieldDeclaration.accept(this));
+    node.getFieldDeclarations()
+        .forEach(
+            fieldDeclaration -> {
+              indent();
+              fieldDeclaration.accept(this);
+              append("\n");
+            });
     indent--;
     indent();
     append("}");
@@ -40,10 +48,17 @@ public class GoCodeGenerator extends CLikeCodeGenerator {
 
   @Override
   public void visit(FieldDeclarationNode node) {
-
-    node.getIdentifier().accept(this);
+    fieldName(node.getIdentifier()).accept(this);
     append(" ");
     node.getType().accept(this);
+  }
+
+  private static IdentifierNode fieldName(IdentifierNode identifier) {
+    // return a go public field name
+    Token token = identifier.getToken();
+    String text = token.getText();
+    return new IdentifierNode(
+        new Token(token.getType(), text.substring(0, 1).toUpperCase() + text.substring(1)));
   }
 
   @Override

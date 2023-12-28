@@ -137,3 +137,33 @@ fn sum(v: i32, n: i32) -> i32 {
     return v
 }
 ```
+
+## Features
+
+- [x] Types
+- [x] Functions
+- [x] Literals
+- [x] Arrays
+- [x] Variables
+- [x] If/else statements
+- [x] For loops
+- [x] For-each loops
+- [x] Static typing
+- [x] Infix expressions
+
+Eschewed features:
+
+- [ ] Floating point arithmetic
+- [ ] Switch statements
+- [ ] While loops
+- [ ] Do-while loops
+- [ ] Classes
+- [ ] Interfaces
+- [ ] Enums
+- [ ] Generics
+- [ ] Inheritance
+- [ ] Lambdas
+- [ ] Tuples
+- [ ] Pattern matching
+- [ ] Null safety
+- [ ] Optionals

@@ -51,6 +51,16 @@ public class PythonCodeGenerator extends AbstractCodeGenerator {
     node.getIdentifier().accept(this);
     append(":\n");
     indent++;
+    indent();
+    append("def __init__(self");
+    node.getFieldDeclarations()
+        .forEach(
+            fieldDeclaration -> {
+              append(", ");
+              append(fieldDeclaration.getIdentifier().getToken().getText());
+            });
+    append("):\n");
+    indent++;
     node.getFieldDeclarations()
         .forEach(
             fieldDeclaration -> {
@@ -59,10 +69,16 @@ public class PythonCodeGenerator extends AbstractCodeGenerator {
               append("\n");
             });
     indent--;
+    indent--;
   }
 
   @Override
-  public void visit(FieldDeclarationNode node) {}
+  public void visit(FieldDeclarationNode node) {
+    append("self.");
+    node.getIdentifier().accept(this);
+    append(" = ");
+    node.getIdentifier().accept(this);
+  }
 
   @Override
   public void visit(MethodDeclarationNode node) {

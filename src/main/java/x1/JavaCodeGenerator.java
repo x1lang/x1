@@ -29,7 +29,7 @@ public class JavaCodeGenerator extends CLikeCodeGenerator {
 
   @Override
   public void visit(TypeDeclarationNode node) {
-    append("class ");
+    append("public class ");
     node.getIdentifier().accept(this);
     append(" {\n");
     indent++;
@@ -40,17 +40,17 @@ public class JavaCodeGenerator extends CLikeCodeGenerator {
               fieldDeclaration.accept(this);
               append(";\n");
             });
-    indent();
+    indent--;
     indent();
     append("}");
   }
 
   @Override
   public void visit(FieldDeclarationNode node) {
+    append("public ");
     type(node.getType()).accept(this);
     append(" ");
     node.getIdentifier().accept(this);
-    append(";\n");
   }
 
   @Override

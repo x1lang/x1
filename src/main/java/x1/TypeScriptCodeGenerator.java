@@ -38,7 +38,7 @@ public class TypeScriptCodeGenerator extends JavascriptCodeGenerator {
             fieldDeclaration -> {
               indent();
               fieldDeclaration.accept(this);
-              append(";\n");
+              append("\n");
             });
     indent--;
     indent();
