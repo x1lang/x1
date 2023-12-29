@@ -4,10 +4,7 @@ import x1.model.*;
 
 public interface NodeVisitor {
 
-  default void visit(CompilationUnitNode node) {
-    node.getTypeDeclarations().forEach(typeDeclaration -> typeDeclaration.accept(this));
-    node.getMethodDeclarations().forEach(methodDeclaration -> methodDeclaration.accept(this));
-  }
+  void visit(CompilationUnitNode compilationUnitNode);
 
   void visit(TypeDeclarationNode node);
 
@@ -56,6 +53,10 @@ public interface NodeVisitor {
   void visit(ExpressionNode node);
 
   void visit(ArrayExpressionNode node);
+
+  void visit(ObjectExpressionNode node);
+
+  void visit(ObjectFieldNode objectFieldNode);
 
   void visit(LiteralNode node);
 

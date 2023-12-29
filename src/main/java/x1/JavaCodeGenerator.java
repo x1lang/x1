@@ -129,4 +129,27 @@ public class JavaCodeGenerator extends CLikeCodeGenerator {
     }
     append("}");
   }
+
+  @Override
+  public void visit(ObjectExpressionNode node) {
+    append("new ");
+    type(node.getType()).accept(this);
+    append("() { {");
+    for (int i = 0; i < node.getFields().size(); i++) {
+      if (i > 0) {
+        append(", ");
+      }
+      node.getFields().get(i).accept(this);
+      append(";\n");
+    }
+    append("} }");
+  }
+
+  @Override
+  public void visit(ObjectFieldNode objectFieldNode) {
+    append("this.");
+    objectFieldNode.getIdentifier().accept(this);
+    append(" = ");
+    objectFieldNode.getExpression().accept(this);
+  }
 }

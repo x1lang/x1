@@ -4,7 +4,7 @@ function sum(v: Int, n: Int): Int {
       v = v + i
     }
   }
-  var y:[]Int = []Int [1,2]
+  var y:[]Int = new []Int [1,2]
   foreach (x:Int; y) {
     v = v + x
   }

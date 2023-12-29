@@ -1,5 +1,7 @@
 package x1;
 
+import static x1.model.TokenType.*;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -18,48 +20,48 @@ public class Parser {
 
   public CompilationUnitNode parse() throws IOException {
     CompilationUnitNode node = compilationUnit();
-    match(TokenType.EOF);
+    match(EOF);
     return node;
   }
 
   private CompilationUnitNode compilationUnit() throws IOException {
     List<TypeDeclarationNode> typeDeclarations = new ArrayList<>();
     List<MethodDeclarationNode> methodDeclarations = new ArrayList<>();
-    while (peek() == TokenType.TYPE) {
+    while (currentToken.getType() == TYPE) {
       typeDeclarations.add(typeDeclaration());
     }
-    while (peek() == TokenType.FUNCTION) {
+    while (currentToken.getType() == FUNCTION) {
       methodDeclarations.add(methodDeclaration());
     }
     return new CompilationUnitNode(typeDeclarations, methodDeclarations);
   }
 
   private TypeDeclarationNode typeDeclaration() throws IOException {
-    match(TokenType.TYPE);
+    match(TYPE);
     IdentifierNode identifier = identifier();
-    match(TokenType.LBRACE);
+    match(LBRACE);
     List<FieldDeclarationNode> fieldDeclarations = new ArrayList<>();
-    while (peek() == TokenType.IDENTIFIER) {
+    while (currentToken.getType() == IDENTIFIER) {
       fieldDeclarations.add(fieldDeclaration());
     }
-    match(TokenType.RBRACE);
+    match(RBRACE);
     return new TypeDeclarationNode(identifier, fieldDeclarations);
   }
 
   private FieldDeclarationNode fieldDeclaration() throws IOException {
     IdentifierNode identifier = identifier();
-    match(TokenType.COLON);
+    match(COLON);
     TypeNode type = type();
     return new FieldDeclarationNode(identifier, type);
   }
 
   private MethodDeclarationNode methodDeclaration() throws IOException {
-    match(TokenType.FUNCTION);
+    match(FUNCTION);
     IdentifierNode identifier = identifier();
-    match(TokenType.LPAREN);
+    match(LPAREN);
     ParameterListNode parameterList = parameterList();
-    match(TokenType.RPAREN);
-    match(TokenType.COLON);
+    match(RPAREN);
+    match(COLON);
     TypeNode type = type();
     BlockNode block = block();
     return new MethodDeclarationNode(identifier, parameterList, type, block);
@@ -67,11 +69,11 @@ public class Parser {
 
   private ParameterListNode parameterList() throws IOException {
     List<ParameterNode> parameters = new ArrayList<>();
-    if (peek() == TokenType.IDENTIFIER) {
+    if (currentToken.getType() == IDENTIFIER) {
       parameters.add(parameter());
     }
-    while (peek() == TokenType.COMMA) {
-      match(TokenType.COMMA);
+    while (currentToken.getType() == COMMA) {
+      match(COMMA);
       parameters.add(parameter());
     }
     return new ParameterListNode(parameters);
@@ -79,15 +81,15 @@ public class Parser {
 
   private ParameterNode parameter() throws IOException {
     IdentifierNode identifier = identifier();
-    match(TokenType.COLON);
+    match(COLON);
     TypeNode type = type();
     return new ParameterNode(identifier, type);
   }
 
   private TypeNode type() throws IOException {
-    if (peek() == TokenType.LBRACKET) {
-      match(TokenType.LBRACKET);
-      match(TokenType.RBRACKET);
+    if (currentToken.getType() == LBRACKET) {
+      match(LBRACKET);
+      match(RBRACKET);
       return new TypeNode(identifier(), true);
     }
     return new TypeNode(identifier(), false);
@@ -95,16 +97,16 @@ public class Parser {
 
   private BlockNode block() throws IOException {
     List<StatementNode> statements = new ArrayList<>();
-    match(TokenType.LBRACE);
-    while (peek() != TokenType.RBRACE) {
+    match(LBRACE);
+    while (currentToken.getType() != RBRACE) {
       statements.add(statement());
     }
-    match(TokenType.RBRACE);
+    match(RBRACE);
     return new BlockNode(statements);
   }
 
   private StatementNode statement() throws IOException {
-    switch (peek()) {
+    switch (currentToken.getType()) {
       case VAR:
         return variableDeclaration();
       case IDENTIFIER:
@@ -118,78 +120,84 @@ public class Parser {
       case RETURN:
         return returnStatement();
       default:
-        throw new Error("Invalid statement: " + peek());
+        throw new IllegalStateException(
+            "Invalid statement: "
+                + currentToken.getType()
+                + " at "
+                + lexer.getLine()
+                + ":"
+                + lexer.getColumn());
     }
   }
 
   private StatementNode forEachStatement() throws IOException {
-    match(TokenType.FOREACH);
-    match(TokenType.LPAREN);
+    match(FOREACH);
+    match(LPAREN);
     IdentifierNode identifier = identifier();
-    match(TokenType.COLON);
+    match(COLON);
     TypeNode type = type();
-    match(TokenType.SEMICOLON);
+    match(SEMICOLON);
     ExpressionNode expression = expression();
-    match(TokenType.RPAREN);
+    match(RPAREN);
     BlockNode block = block();
     return new ForEachDeclarationNode(identifier, type, expression, block);
   }
 
   private VariableDeclarationNode variableDeclaration() throws IOException {
-    match(TokenType.VAR);
+    match(VAR);
     IdentifierNode identifier = identifier();
-    match(TokenType.COLON);
+    match(COLON);
     TypeNode type = type();
-    match(TokenType.EQUAL);
+    match(EQUAL);
     ExpressionNode expression = expression();
     return new VariableDeclarationNode(identifier, type, expression);
   }
 
   private AssignmentStatementNode assignmentStatement() throws IOException {
     IdentifierNode identifier = identifier();
-    match(TokenType.EQUAL);
+    match(EQUAL);
     ExpressionNode expression = expression();
     return new AssignmentStatementNode(identifier, expression);
   }
 
   private IfStatementNode ifStatement() throws IOException {
-    match(TokenType.IF);
-    match(TokenType.LPAREN);
+    match(IF);
+    match(LPAREN);
     ExpressionNode expression = expression();
-    match(TokenType.RPAREN);
+    match(RPAREN);
     BlockNode block = block();
     BlockNode elseBlock = null;
-    if (peek() == TokenType.ELSE) {
-      match(TokenType.ELSE);
+    if (currentToken.getType() == ELSE) {
+      match(ELSE);
       elseBlock = block();
     }
     return new IfStatementNode(expression, block, elseBlock);
   }
 
   private ForDeclarationNode forStatement() throws IOException {
-    match(TokenType.FOR);
-    match(TokenType.LPAREN);
+    match(FOR);
+    match(LPAREN);
     VariableDeclarationNode variableDeclarationNode = variableDeclaration();
-    match(TokenType.SEMICOLON);
+    match(SEMICOLON);
     ExpressionNode expression = expression();
-    match(TokenType.SEMICOLON);
+    match(SEMICOLON);
     AssignmentStatementNode assignmentStatement = assignmentStatement();
-    match(TokenType.RPAREN);
+    match(RPAREN);
     BlockNode block = block();
     return new ForDeclarationNode(variableDeclarationNode, expression, assignmentStatement, block);
   }
 
   private ReturnStatementNode returnStatement() throws IOException {
-    match(TokenType.RETURN);
-    TokenType peek = peek();
-    if (peek == TokenType.IDENTIFIER
-        || peek == TokenType.NUMBER
-        || peek == TokenType.TRUE
-        || peek == TokenType.FALSE
-        || peek == TokenType.STRING
-        || peek == TokenType.MINUS
-        || peek == TokenType.NOT
-        || peek == TokenType.LPAREN) {
+    match(RETURN);
+    TokenType peek = currentToken.getType();
+    if (peek == IDENTIFIER
+        || peek == NUMBER
+        || peek == TRUE
+        || peek == FALSE
+        || peek == STRING
+        || peek == MINUS
+        || peek == NOT
+        || peek == LPAREN) {
       ExpressionNode expression = expression();
       return new ReturnStatementNode(expression);
     }
@@ -206,28 +214,42 @@ public class Parser {
 
     while (isOperand(currentToken)
         || isOperator(currentToken)
-        || currentToken.getType() == TokenType.LPAREN
-        || currentToken.getType() == TokenType.LBRACKET) {
+        || currentToken.getType() == NEW
+        || currentToken.getType() == LBRACKET) {
 
       if (isOperand(currentToken)) {
-        if (currentToken.getType() == TokenType.IDENTIFIER) {
+        if (currentToken.getType() == IDENTIFIER) {
           outputQueue.push(new IdentifierNode(currentToken));
         } else {
           outputQueue.push(new LiteralNode(currentToken));
         }
         currentToken = lexer.nextToken();
         // is it an array creation
-      } else if (currentToken.getType() == TokenType.LBRACKET) {
+      } else if (currentToken.getType() == NEW) {
+        match(NEW);
         TypeNode type = type();
-        match(TokenType.LBRACKET);
-        List<ExpressionNode> expressions = new ArrayList<>();
-        expressions.add(expression());
-        while (peek() == TokenType.COMMA) {
-          match(TokenType.COMMA);
+        if (type.isArray()) {
+          List<ExpressionNode> expressions = new ArrayList<>();
+          match(LBRACKET);
           expressions.add(expression());
+          while (currentToken.getType() == COMMA) {
+            match(COMMA);
+            expressions.add(expression());
+          }
+          match(RBRACKET);
+          outputQueue.push(new ArrayExpressionNode(type, expressions));
+        } else {
+          List<ObjectFieldNode> fields = new ArrayList<>();
+          match(LBRACE);
+          while (currentToken.getType() == IDENTIFIER) {
+            IdentifierNode identifier = identifier();
+            match(COLON);
+            ExpressionNode expression = expression();
+            fields.add(new ObjectFieldNode(identifier, expression));
+          }
+          match(RBRACE);
+          outputQueue.push(new ObjectExpressionNode(type, fields));
         }
-        match(TokenType.RBRACKET);
-        outputQueue.push(new ArrayExpressionNode(type, expressions));
       } else if (isOperator(currentToken)) {
         while (!operatorStack.isEmpty() && hasPrecedence(currentToken, operatorStack.peek())) {
           Token operator = operatorStack.pop();
@@ -237,21 +259,23 @@ public class Parser {
         }
         operatorStack.push(currentToken);
         currentToken = lexer.nextToken();
-      } else if (currentToken.getType() == TokenType.LPAREN) {
+      } else if (currentToken.getType() == LPAREN) {
         operatorStack.push(currentToken);
         currentToken = lexer.nextToken();
-      } else if (currentToken.getType() == TokenType.RPAREN) {
-        while (operatorStack.peek().getType() != TokenType.LPAREN) {
+      } else if (currentToken.getType() == RPAREN) {
+        while (operatorStack.peek().getType() != LPAREN) {
           Token operator = operatorStack.pop();
           ExpressionNode right = outputQueue.pop();
           ExpressionNode left = outputQueue.pop();
           outputQueue.push(new BinaryExpressionNode(left, new BinaryOperatorNode(operator), right));
         }
         Token token = operatorStack.pop(); // Discard the left parenthesis
-        if (token.getType() != TokenType.LPAREN) {
+        if (token.getType() != LPAREN) {
           throw new RuntimeException("Invalid token: " + token);
         }
         currentToken = lexer.nextToken();
+      } else {
+        throw new RuntimeException("Invalid token: " + currentToken);
       }
     }
     while (!operatorStack.isEmpty()) {
@@ -265,53 +289,48 @@ public class Parser {
   }
 
   private boolean isOperand(Token token) {
-    return EnumSet.of(TokenType.NUMBER, TokenType.IDENTIFIER, TokenType.TRUE, TokenType.FALSE)
-        .contains(token.getType());
+    return EnumSet.of(NUMBER, STRING, IDENTIFIER, TRUE, FALSE).contains(token.getType());
   }
 
   private boolean isOperator(Token token) {
     return EnumSet.of(
-            TokenType.PLUS,
-            TokenType.MINUS,
-            TokenType.MULTIPLY,
-            TokenType.DIVIDE,
-            TokenType.AND,
-            TokenType.OR,
-            TokenType.MODULO,
-            TokenType.EQUAL_EQUAL,
-            TokenType.NOT_EQUAL,
-            TokenType.LESS,
-            TokenType.LESS_EQUAL,
-            TokenType.GREATER,
-            TokenType.GREATER_EQUAL)
+            PLUS,
+            MINUS,
+            MULTIPLY,
+            DIVIDE,
+            AND,
+            OR,
+            MODULO,
+            EQUAL_EQUAL,
+            NOT_EQUAL,
+            LESS,
+            LESS_EQUAL,
+            GREATER,
+            GREATER_EQUAL)
         .contains(token.getType());
   }
 
   private boolean hasPrecedence(Token token1, Token token2) {
-    if (token2.getType() == TokenType.LPAREN || token2.getType() == TokenType.RPAREN) {
+    if (token2.getType() == LPAREN || token2.getType() == RPAREN) {
       return false;
     }
-    return (token1.getType() != TokenType.MULTIPLY && token1.getType() != TokenType.DIVIDE)
-        || (token2.getType() != TokenType.PLUS && token2.getType() != TokenType.MINUS);
+    return (token1.getType() != MULTIPLY && token1.getType() != DIVIDE)
+        || (token2.getType() != PLUS && token2.getType() != MINUS);
   }
 
   private IdentifierNode identifier() throws IOException {
     Token token = currentToken;
-    match(TokenType.IDENTIFIER);
+    match(IDENTIFIER);
     return new IdentifierNode(token);
   }
 
-  private TokenType peek() {
-    return currentToken.getType();
-  }
-
   private void match(TokenType expected) throws IOException {
-    if (peek() == expected) {
+    if (currentToken.getType() == expected) {
       currentToken = lexer.nextToken();
     } else {
       throw new IllegalStateException(
           "Unexpected token: "
-              + peek()
+              + currentToken.getType()
               + " expected: "
               + expected
               + " at "

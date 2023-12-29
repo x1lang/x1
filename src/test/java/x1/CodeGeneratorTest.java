@@ -12,7 +12,7 @@ import x1.model.CompilationUnitNode;
 class CodeGeneratorTest {
 
   @ParameterizedTest(name = "{0}")
-  @ValueSource(strings = {"example", "type"})
+  @ValueSource(strings = {"type", "objects", "arrays", "example"})
   void generate(String name) throws Exception {
     ClassLoader classLoader = getClass().getClassLoader();
     try (InputStream in = classLoader.getResourceAsStream(name + ".x1")) {

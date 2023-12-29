@@ -172,4 +172,24 @@ public class PythonCodeGenerator extends AbstractCodeGenerator {
     }
     append("]");
   }
+
+  @Override
+  public void visit(ObjectExpressionNode node) {
+    append(node.getType().getIdentifier().getToken().getText());
+    append("(");
+    for (int i = 0; i < node.getFields().size(); i++) {
+      if (i > 0) {
+        append(", ");
+      }
+      node.getFields().get(i).accept(this);
+    }
+    append(")");
+  }
+
+  @Override
+  public void visit(ObjectFieldNode objectFieldNode) {
+    objectFieldNode.getIdentifier().accept(this);
+    append(" = ");
+    objectFieldNode.getExpression().accept(this);
+  }
 }

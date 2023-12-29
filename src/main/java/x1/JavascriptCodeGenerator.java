@@ -73,6 +73,25 @@ public class JavascriptCodeGenerator extends CLikeCodeGenerator {
   }
 
   @Override
+  public void visit(ObjectExpressionNode node) {
+    append("{");
+    for (int i = 0; i < node.getFields().size(); i++) {
+      if (i > 0) {
+        append(", ");
+      }
+      node.getFields().get(i).accept(this);
+    }
+    append("}");
+  }
+
+  @Override
+  public void visit(ObjectFieldNode objectFieldNode) {
+    objectFieldNode.getIdentifier().accept(this);
+    append(": ");
+    objectFieldNode.getExpression().accept(this);
+  }
+
+  @Override
   public void visit(ArrayExpressionNode node) {
     append("[");
     for (int i = 0; i < node.getExpressions().size(); i++) {

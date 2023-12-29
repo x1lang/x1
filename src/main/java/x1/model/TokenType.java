@@ -47,4 +47,5 @@ public enum TokenType {
   RPAREN,
   THIS,
   DOT,
+  NEW,
 }

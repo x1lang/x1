@@ -2,9 +2,7 @@ package x1;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Deque;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 import lombok.Getter;
 import x1.model.Token;
@@ -16,6 +14,7 @@ public class Lexer {
   static {
     KEYWORDS = new HashMap<>();
     KEYWORDS.put("this", TokenType.THIS);
+    KEYWORDS.put("new", TokenType.NEW);
     KEYWORDS.put("type", TokenType.TYPE);
     KEYWORDS.put("function", TokenType.FUNCTION);
     KEYWORDS.put("var", TokenType.VAR);
@@ -29,20 +28,16 @@ public class Lexer {
   }
 
   private final InputStream in;
-  private final Deque<Token> tokenStack = new LinkedList<>();
   private int currentChar;
   @Getter private int line = 1;
   @Getter private int column = 1;
 
   Lexer(InputStream in) throws IOException {
     this.in = in;
-    this.currentChar = in.read();
+    consume();
   }
 
   Token nextToken() throws IOException {
-    if (!tokenStack.isEmpty()) {
-      return tokenStack.pop();
-    }
 
     while (Character.isWhitespace(currentChar)) {
       consume();
@@ -163,16 +158,6 @@ public class Lexer {
     }
   }
 
-  void pushBack(Token token) {
-    tokenStack.push(token);
-  }
-
-  Token lookAhead() throws IOException {
-    Token token = nextToken();
-    pushBack(token);
-    return token;
-  }
-
   private void consume() throws IOException {
     currentChar = in.read();
     column++;
@@ -214,6 +199,6 @@ public class Lexer {
 
   @Override
   public String toString() {
-    return "[" + line + ":" + column + "]" + (char) currentChar;
+    return "[" + line + ":" + column + "]'" + (char) currentChar + "'";
   }
 }

@@ -1,4 +1,4 @@
 type Person struct {
-  Name string
+  Name 
   Age int
 }

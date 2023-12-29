@@ -1,0 +1,11 @@
+type Person {
+   names: []String
+}
+
+function main(): []String {
+   var names:[]String = new []String ["John", "Doe"]
+   var p: Person = new Person {
+       names: names
+   }
+   return p.names
+}

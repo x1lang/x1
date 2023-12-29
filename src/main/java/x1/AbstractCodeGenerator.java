@@ -1,5 +1,6 @@
 package x1;
 
+import lombok.SneakyThrows;
 import x1.model.*;
 
 abstract class AbstractCodeGenerator implements NodeVisitor, CodeGenerator {
@@ -29,6 +30,22 @@ abstract class AbstractCodeGenerator implements NodeVisitor, CodeGenerator {
 
   TypeNode type(TypeNode type) {
     return new TypeNode(typeIdentifier(type.getIdentifier()), type.isArray());
+  }
+
+  @SneakyThrows
+  public void visit(CompilationUnitNode node) {
+    node.getTypeDeclarations()
+        .forEach(
+            typeDeclaration -> {
+              typeDeclaration.accept(this);
+              append("\n");
+            });
+    node.getMethodDeclarations()
+        .forEach(
+            methodDeclaration -> {
+              methodDeclaration.accept(this);
+              append("\n");
+            });
   }
 
   @Override

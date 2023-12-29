@@ -21,11 +21,10 @@ public class GoCodeGenerator extends CLikeCodeGenerator {
       case "Boolean":
         return "boolean";
       case "String":
-        return "string";
       case "Void":
-        return "void";
+        return "";
     }
-    return super.type(text);
+    return text.substring(0, 1).toUpperCase() + text.substring(1);
   }
 
   @Override
@@ -48,17 +47,9 @@ public class GoCodeGenerator extends CLikeCodeGenerator {
 
   @Override
   public void visit(FieldDeclarationNode node) {
-    fieldName(node.getIdentifier()).accept(this);
+    typeIdentifier(node.getIdentifier()).accept(this);
     append(" ");
     node.getType().accept(this);
-  }
-
-  private static IdentifierNode fieldName(IdentifierNode identifier) {
-    // return a go public field name
-    Token token = identifier.getToken();
-    String text = token.getText();
-    return new IdentifierNode(
-        new Token(token.getType(), text.substring(0, 1).toUpperCase() + text.substring(1)));
   }
 
   @Override
@@ -123,6 +114,17 @@ public class GoCodeGenerator extends CLikeCodeGenerator {
   }
 
   @Override
+  public void visit(BlockNode node) {
+    node.getStatements()
+        .forEach(
+            statement -> {
+              indent();
+              statement.accept(this);
+              append("\n");
+            });
+  }
+
+  @Override
   public void visit(IfStatementNode node) {
     indent();
     append("if ");
@@ -169,5 +171,25 @@ public class GoCodeGenerator extends CLikeCodeGenerator {
       node.getExpressions().get(i).accept(this);
     }
     append("}");
+  }
+
+  @Override
+  public void visit(ObjectExpressionNode node) {
+    append(node.getType().getIdentifier().getToken().getText());
+    append("{");
+    for (int i = 0; i < node.getFields().size(); i++) {
+      if (i > 0) {
+        append(", ");
+      }
+      node.getFields().get(i).accept(this);
+    }
+    append("}");
+  }
+
+  @Override
+  public void visit(ObjectFieldNode objectFieldNode) {
+    typeIdentifier(objectFieldNode.getIdentifier()).accept(this);
+    append(": ");
+    objectFieldNode.getExpression().accept(this);
   }
 }
