@@ -1,11 +1,12 @@
-type Person {
+package main
+
+type Pet {
    names: []String
 }
 
-main(): []String {
+main(): Void {
    var names:[]String = new []String ["John", "Doe"]
-   var p: Person = new Person {
+   var p: Pet = new Pet {
        names: names
    }
-   return p.names
 }

@@ -1,9 +1,10 @@
-public class Person {
+package main;
+
+public class Pet {
   public String[] names;
 }
-public String[] main() {
+public void main() {
   String[] names = new String[]{"John", "Doe"};
-  Person p = new Person() { {this.names = names;
+  Pet p = new Pet() { {this.names = names;
 } };
-  return p.names;
 }

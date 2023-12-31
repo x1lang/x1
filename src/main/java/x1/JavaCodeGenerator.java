@@ -28,6 +28,13 @@ public class JavaCodeGenerator extends CLikeCodeGenerator {
   }
 
   @Override
+  public void visit(PackageDeclarationNode packageDeclarationNode) {
+    append("package ");
+    packageDeclarationNode.getPackageName().accept(this);
+    append(";\n\n");
+  }
+
+  @Override
   public void visit(TypeDeclarationNode node) {
     append("public class ");
     node.getIdentifier().accept(this);

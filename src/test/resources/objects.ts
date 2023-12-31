@@ -1,6 +1,6 @@
-class Person {
+class Artist {
   age: number
-
-string(): String {
+  string(): String {
     return "What's up?";
-  }}
+  }
+}

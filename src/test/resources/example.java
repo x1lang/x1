@@ -1,3 +1,5 @@
+package main;
+
 public int sum(int v, int n) {
   for (int i = 0; i < n; i = i + 1) {
     if (i % 2 == 0) {

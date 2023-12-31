@@ -15,6 +15,7 @@ public class Lexer {
 
   static {
     KEYWORDS = new HashMap<>();
+    KEYWORDS.put("package", TokenType.PACKAGE);
     KEYWORDS.put("this", TokenType.THIS);
     KEYWORDS.put("new", TokenType.NEW);
     KEYWORDS.put("type", TokenType.TYPE);

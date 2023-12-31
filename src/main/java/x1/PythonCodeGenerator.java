@@ -15,6 +15,9 @@ public class PythonCodeGenerator extends AbstractCodeGenerator {
   }
 
   @Override
+  public void visit(PackageDeclarationNode packageDeclarationNode) {}
+
+  @Override
   public void visit(VariableDeclarationNode node) {
     node.getIdentifier().accept(this);
     append(" = ");

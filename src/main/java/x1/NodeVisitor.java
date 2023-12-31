@@ -71,4 +71,6 @@ public interface NodeVisitor {
   void visit(IdentifierNode node);
 
   void visit(MethodDeclarationNode methodDeclarationNode);
+
+  void visit(PackageDeclarationNode packageDeclarationNode);
 }

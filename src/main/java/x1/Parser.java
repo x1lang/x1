@@ -25,6 +25,8 @@ public class Parser {
   }
 
   private CompilationUnitNode compilationUnit() throws IOException {
+    PackageDeclarationNode packageDeclaration = packageDeclaration();
+
     List<TypeDeclarationNode> typeDeclarations = new ArrayList<>();
     List<FunctionDeclarationNode> functionDeclarations = new ArrayList<>();
     while (currentToken.getType() != EOF) {
@@ -34,7 +36,16 @@ public class Parser {
         functionDeclarations.add(functionDeclaration());
       }
     }
-    return new CompilationUnitNode(typeDeclarations, functionDeclarations);
+    return new CompilationUnitNode(packageDeclaration, typeDeclarations, functionDeclarations);
+  }
+
+  private PackageDeclarationNode packageDeclaration() throws IOException {
+    if (currentToken.getType() == PACKAGE) {
+      match(PACKAGE);
+      IdentifierNode identifier = identifier();
+      return new PackageDeclarationNode(identifier);
+    }
+    return null;
   }
 
   private TypeDeclarationNode typeDeclaration() throws IOException {

@@ -21,10 +21,19 @@ public class GoCodeGenerator extends CLikeCodeGenerator {
       case "Boolean":
         return "boolean";
       case "String":
+        return "string";
       case "Void":
         return "";
     }
     return text.substring(0, 1).toUpperCase() + text.substring(1);
+  }
+
+  @Override
+  public void visit(PackageDeclarationNode packageDeclarationNode) {
+    append("package ");
+    packageDeclarationNode.getPackageName().accept(this);
+    append("\n");
+    append("\n");
   }
 
   @Override

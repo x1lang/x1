@@ -43,8 +43,9 @@ public class TypeScriptCodeGenerator extends JavascriptCodeGenerator {
     node.getMethodDeclarations()
         .forEach(
             methodDeclaration -> {
-              append("\n");
+              indent();
               methodDeclaration.accept(this);
+              append("\n");
             });
     indent--;
     indent();

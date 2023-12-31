@@ -1,6 +1,6 @@
-class Person {
+class Artist {
   age = 0;
-string() {
+  string() {
     return "What's up?";
   }
 }

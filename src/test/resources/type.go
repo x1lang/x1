@@ -1,4 +1,6 @@
+package main
+
 type Person struct {
-  Name 
+  Name string
   Age int
 }

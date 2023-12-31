@@ -1,3 +1,5 @@
+package main
+
 type Person {
     name: String
     age: Int

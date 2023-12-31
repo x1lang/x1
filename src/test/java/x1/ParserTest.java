@@ -21,6 +21,8 @@ class ParserTest {
 
       CompilationUnitNode expected =
           new CompilationUnitNode(
+              new PackageDeclarationNode(
+                  new IdentifierNode(new Token(TokenType.IDENTIFIER, "main"))),
               Collections.emptyList(),
               Collections.singletonList(
                   new FunctionDeclarationNode(

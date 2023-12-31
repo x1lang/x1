@@ -1,7 +1,9 @@
-type Person struct {
+package main
+
+type Artist struct {
   Age int
 }
 
-func (this) string()  {
+func (this) string() string {
   return "What's up?"
 }

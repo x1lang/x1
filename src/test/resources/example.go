@@ -1,3 +1,5 @@
+package main
+
 func sum(v int, n int) int {
   for i := 0; i < n; i = i + 1 {
         if i % 2 == 0 {

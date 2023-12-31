@@ -1,4 +1,6 @@
-type Person {
+package main
+
+type Artist {
     age: Int
     string(): String {
         return "What's up?"

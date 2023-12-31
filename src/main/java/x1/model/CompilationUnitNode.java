@@ -6,6 +6,7 @@ import x1.NodeVisitor;
 
 @Value
 public class CompilationUnitNode implements Node {
+  PackageDeclarationNode packageDeclaration;
   List<TypeDeclarationNode> typeDeclarations;
   List<FunctionDeclarationNode> functionDeclarations;
 

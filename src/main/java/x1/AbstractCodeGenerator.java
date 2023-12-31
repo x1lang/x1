@@ -34,6 +34,7 @@ abstract class AbstractCodeGenerator implements NodeVisitor, CodeGenerator {
 
   @SneakyThrows
   public void visit(CompilationUnitNode node) {
+    node.getPackageDeclaration().accept(this);
     node.getTypeDeclarations()
         .forEach(
             typeDeclaration -> {

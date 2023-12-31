@@ -15,6 +15,9 @@ public class JavascriptCodeGenerator extends CLikeCodeGenerator {
   }
 
   @Override
+  public void visit(PackageDeclarationNode packageDeclarationNode) {}
+
+  @Override
   public void visit(TypeDeclarationNode node) {
     // class
     append("class ");
@@ -33,6 +36,7 @@ public class JavascriptCodeGenerator extends CLikeCodeGenerator {
     node.getMethodDeclarations()
         .forEach(
             methodDeclaration -> {
+              indent();
               methodDeclaration.accept(this);
               append("\n");
             });

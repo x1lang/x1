@@ -1,8 +1,9 @@
-type Person struct {
-  Names []
+package main
+
+type Pet struct {
+  Names []string
 }
-func main() [] {
-  names := []{"John", "Doe"}
-  p := Person{Names: names}
-  return p.names
+func main()  {
+  names := []string{"John", "Doe"}
+  p := Pet{Names: names}
 }

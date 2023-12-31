@@ -1,8 +1,7 @@
-class Person {
+class Pet {
   names: String[]
 }
-function main(): String[] {
+function main(): void {
   let names: String[] = ["John", "Doe"];
-  let p: Person = {names: names};
-  return p.names;
+  let p: Pet = {names: names};
 }

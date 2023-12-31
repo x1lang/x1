@@ -9,6 +9,8 @@ public enum TokenType {
   TRUE,
   FALSE,
   // keywords
+  PACKAGE,
+  NEW,
   TYPE,
   VAR,
   IF,
@@ -46,5 +48,4 @@ public enum TokenType {
   RPAREN,
   THIS,
   DOT,
-  NEW,
 }
