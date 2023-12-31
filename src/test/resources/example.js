@@ -1,4 +1,4 @@
-function sum(v, n) {
+sum(v, n) {
   for (let  i = 0; i < n; i = i + 1) {
     if (i % 2 === 0) {
       v = v + i;

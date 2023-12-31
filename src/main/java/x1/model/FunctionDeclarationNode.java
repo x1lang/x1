@@ -4,7 +4,7 @@ import lombok.Value;
 import x1.NodeVisitor;
 
 @Value
-public class MethodDeclarationNode implements Node {
+public class FunctionDeclarationNode implements Node {
   IdentifierNode identifier;
   ParameterListNode parameterList;
   TypeNode returnType;

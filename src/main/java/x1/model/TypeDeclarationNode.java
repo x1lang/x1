@@ -8,6 +8,7 @@ import x1.NodeVisitor;
 public class TypeDeclarationNode implements Node {
   IdentifierNode identifier;
   List<FieldDeclarationNode> fieldDeclarations;
+  List<MethodDeclarationNode> methodDeclarations;
 
   @Override
   public void accept(NodeVisitor visitor) {

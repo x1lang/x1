@@ -7,7 +7,7 @@ import x1.NodeVisitor;
 @Value
 public class CompilationUnitNode implements Node {
   List<TypeDeclarationNode> typeDeclarations;
-  List<MethodDeclarationNode> methodDeclarations;
+  List<FunctionDeclarationNode> functionDeclarations;
 
   @Override
   public void accept(NodeVisitor visitor) {

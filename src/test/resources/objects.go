@@ -1,6 +1,7 @@
 type Person struct {
   Age int
 }
-func main()  {
-  p := Person{Age: 31}
+
+func (this) string()  {
+  return "What's up?"
 }

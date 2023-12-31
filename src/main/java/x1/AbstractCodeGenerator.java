@@ -40,7 +40,7 @@ abstract class AbstractCodeGenerator implements NodeVisitor, CodeGenerator {
               typeDeclaration.accept(this);
               append("\n");
             });
-    node.getMethodDeclarations()
+    node.getFunctionDeclarations()
         .forEach(
             methodDeclaration -> {
               methodDeclaration.accept(this);
@@ -85,7 +85,13 @@ abstract class AbstractCodeGenerator implements NodeVisitor, CodeGenerator {
 
   @Override
   public void visit(LiteralNode node) {
-    append(node.getToken().getText());
+    if (node.getToken().getType() == TokenType.STRING) {
+      append("\"");
+      append(node.getToken().getText());
+      append("\"");
+    } else {
+      append(node.getToken().getText());
+    }
   }
 
   void append(String text) {

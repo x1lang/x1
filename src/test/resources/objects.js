@@ -1,4 +1,6 @@
-
-function main() {
-  let  p = {age: 31};
+class Person {
+  age = 0;
+string() {
+    return "What's up?";
+  }
 }

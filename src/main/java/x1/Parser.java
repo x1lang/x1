@@ -26,14 +26,15 @@ public class Parser {
 
   private CompilationUnitNode compilationUnit() throws IOException {
     List<TypeDeclarationNode> typeDeclarations = new ArrayList<>();
-    List<MethodDeclarationNode> methodDeclarations = new ArrayList<>();
-    while (currentToken.getType() == TYPE) {
-      typeDeclarations.add(typeDeclaration());
+    List<FunctionDeclarationNode> functionDeclarations = new ArrayList<>();
+    while (currentToken.getType() != EOF) {
+      if (currentToken.getType() == TYPE) {
+        typeDeclarations.add(typeDeclaration());
+      } else {
+        functionDeclarations.add(functionDeclaration());
+      }
     }
-    while (currentToken.getType() == FUNCTION) {
-      methodDeclarations.add(methodDeclaration());
-    }
-    return new CompilationUnitNode(typeDeclarations, methodDeclarations);
+    return new CompilationUnitNode(typeDeclarations, functionDeclarations);
   }
 
   private TypeDeclarationNode typeDeclaration() throws IOException {
@@ -41,11 +42,25 @@ public class Parser {
     IdentifierNode identifier = identifier();
     match(LBRACE);
     List<FieldDeclarationNode> fieldDeclarations = new ArrayList<>();
+    List<MethodDeclarationNode> methodDeclaration = new ArrayList<>();
     while (currentToken.getType() == IDENTIFIER) {
-      fieldDeclarations.add(fieldDeclaration());
+      Token lookAhead = lexer.lookAhead();
+      if (lookAhead.getType() == COLON) {
+        fieldDeclarations.add(fieldDeclaration());
+      } else if (lookAhead.getType() == LPAREN) {
+        methodDeclaration.add(methodDeclaration());
+      } else {
+        throw new IllegalStateException(
+            "Invalid type declaration: "
+                + lookAhead.getType()
+                + " at "
+                + lexer.getLine()
+                + ":"
+                + lexer.getColumn());
+      }
     }
     match(RBRACE);
-    return new TypeDeclarationNode(identifier, fieldDeclarations);
+    return new TypeDeclarationNode(identifier, fieldDeclarations, methodDeclaration);
   }
 
   private FieldDeclarationNode fieldDeclaration() throws IOException {
@@ -56,7 +71,6 @@ public class Parser {
   }
 
   private MethodDeclarationNode methodDeclaration() throws IOException {
-    match(FUNCTION);
     IdentifierNode identifier = identifier();
     match(LPAREN);
     ParameterListNode parameterList = parameterList();
@@ -65,6 +79,17 @@ public class Parser {
     TypeNode type = type();
     BlockNode block = block();
     return new MethodDeclarationNode(identifier, parameterList, type, block);
+  }
+
+  private FunctionDeclarationNode functionDeclaration() throws IOException {
+    IdentifierNode identifier = identifier();
+    match(LPAREN);
+    ParameterListNode parameterList = parameterList();
+    match(RPAREN);
+    match(COLON);
+    TypeNode type = type();
+    BlockNode block = block();
+    return new FunctionDeclarationNode(identifier, parameterList, type, block);
   }
 
   private ParameterListNode parameterList() throws IOException {
@@ -191,7 +216,7 @@ public class Parser {
     match(RETURN);
     TokenType peek = currentToken.getType();
     if (peek == IDENTIFIER
-        || peek == NUMBER
+        || peek == INTEGER
         || peek == TRUE
         || peek == FALSE
         || peek == STRING
@@ -289,7 +314,7 @@ public class Parser {
   }
 
   private boolean isOperand(Token token) {
-    return EnumSet.of(NUMBER, STRING, IDENTIFIER, TRUE, FALSE).contains(token.getType());
+    return EnumSet.of(INTEGER, STRING, IDENTIFIER, TRUE, FALSE).contains(token.getType());
   }
 
   private boolean isOperator(Token token) {

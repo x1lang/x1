@@ -40,6 +40,12 @@ public class TypeScriptCodeGenerator extends JavascriptCodeGenerator {
               fieldDeclaration.accept(this);
               append("\n");
             });
+    node.getMethodDeclarations()
+        .forEach(
+            methodDeclaration -> {
+              append("\n");
+              methodDeclaration.accept(this);
+            });
     indent--;
     indent();
     append("}");
@@ -53,13 +59,28 @@ public class TypeScriptCodeGenerator extends JavascriptCodeGenerator {
   }
 
   @Override
-  public void visit(MethodDeclarationNode node) {
+  public void visit(MethodDeclarationNode methodDeclarationNode) {
+    methodDeclarationNode.getIdentifier().accept(this);
+    append("(");
+    methodDeclarationNode.getParameterList().accept(this);
+    append("): ");
+    type(methodDeclarationNode.getReturnType()).accept(this);
+    append(" {\n");
+    indent++;
+    methodDeclarationNode.getBlock().accept(this);
+    indent--;
+    indent();
+    append("}");
+  }
+
+  @Override
+  public void visit(FunctionDeclarationNode node) {
     append("function ");
     node.getIdentifier().accept(this);
     append("(");
     node.getParameterList().accept(this);
     append("): ");
-    type(node.getType()).accept(this);
+    type(node.getReturnType()).accept(this);
     append(" {\n");
     indent++;
     node.getBlock().accept(this);

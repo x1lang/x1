@@ -4,13 +4,12 @@ public enum TokenType {
   EOF,
   IDENTIFIER,
   // literals
-  NUMBER,
+  INTEGER,
   STRING,
   TRUE,
   FALSE,
   // keywords
   TYPE,
-  FUNCTION,
   VAR,
   IF,
   ELSE,

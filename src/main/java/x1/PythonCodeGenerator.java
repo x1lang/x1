@@ -69,6 +69,25 @@ public class PythonCodeGenerator extends AbstractCodeGenerator {
               append("\n");
             });
     indent--;
+    node.getMethodDeclarations()
+        .forEach(
+            methodDeclaration -> {
+              indent();
+              methodDeclaration.accept(this);
+              append("\n");
+            });
+    indent--;
+  }
+
+  @Override
+  public void visit(MethodDeclarationNode methodDeclarationNode) {
+    append("def ");
+    methodDeclarationNode.getIdentifier().accept(this);
+    append("(this");
+    methodDeclarationNode.getParameterList().accept(this);
+    append("):\n");
+    indent++;
+    methodDeclarationNode.getBlock().accept(this);
     indent--;
   }
 
@@ -81,7 +100,7 @@ public class PythonCodeGenerator extends AbstractCodeGenerator {
   }
 
   @Override
-  public void visit(MethodDeclarationNode node) {
+  public void visit(FunctionDeclarationNode node) {
     append("def ");
     node.getIdentifier().accept(this);
     append("(");

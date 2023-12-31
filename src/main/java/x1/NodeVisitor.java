@@ -10,7 +10,7 @@ public interface NodeVisitor {
 
   void visit(FieldDeclarationNode node);
 
-  void visit(MethodDeclarationNode node);
+  void visit(FunctionDeclarationNode node);
 
   void visit(ParameterListNode node);
 
@@ -69,4 +69,6 @@ public interface NodeVisitor {
   void visit(UnaryOperatorNode node);
 
   void visit(IdentifierNode node);
+
+  void visit(MethodDeclarationNode methodDeclarationNode);
 }

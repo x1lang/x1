@@ -3,7 +3,7 @@ class Person:
     self.names = names
 
 def main():
-  names = [John, Doe]
+  names = ["John", "Doe"]
   p = Person(names = names)
   return p.names
 

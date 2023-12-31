@@ -1,11 +1,6 @@
 type Person {
     age: Int
-}
-
-function main():Void {
-    var p: Person = new Person {
-        age: 31
-
+    string(): String {
+        return "What's up?"
     }
-
 }

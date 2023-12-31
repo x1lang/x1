@@ -43,6 +43,28 @@ public class GoCodeGenerator extends CLikeCodeGenerator {
     indent--;
     indent();
     append("}");
+    node.getMethodDeclarations()
+        .forEach(
+            methodDeclaration -> {
+              append("\n\n");
+              methodDeclaration.accept(this);
+            });
+  }
+
+  @Override
+  public void visit(MethodDeclarationNode methodDeclarationNode) {
+    append("func (this) ");
+    methodDeclarationNode.getIdentifier().accept(this);
+    append("(");
+    methodDeclarationNode.getParameterList().accept(this);
+    append(") ");
+    methodDeclarationNode.getReturnType().accept(this);
+    append(" {\n");
+    indent++;
+    methodDeclarationNode.getBlock().accept(this);
+    indent--;
+    indent();
+    append("}");
   }
 
   @Override
@@ -53,13 +75,13 @@ public class GoCodeGenerator extends CLikeCodeGenerator {
   }
 
   @Override
-  public void visit(MethodDeclarationNode node) {
+  public void visit(FunctionDeclarationNode node) {
     append("func ");
     node.getIdentifier().accept(this);
     append("(");
     node.getParameterList().accept(this);
     append(") ");
-    node.getType().accept(this);
+    node.getReturnType().accept(this);
     append(" {\n");
     indent++;
     node.getBlock().accept(this);

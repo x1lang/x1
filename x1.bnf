@@ -1,4 +1,4 @@
-compilation_unit ::= [ package_statement ] {import_statement} type_declaration* method_declaration*
+compilation_unit ::= [ package_statement ] {import_statement} type_declaration* function_declaration*
 
 package_statement ::= "package" package_name
 
@@ -16,7 +16,7 @@ type_declaration ::= "type" identifier "=" field_declaration*
 
 field_declaration ::= identifier ":" type
 
-method_declaration ::= "function" identifier "(" [ parameter_list ] ")" [ ":" type ] block
+function_declaration ::= identifier "(" [ parameter_list ] ")" [ ":" type ] block
 
 parameter_list ::= parameter { "," parameter }
 

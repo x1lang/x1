@@ -2,7 +2,9 @@ package x1;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Deque;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import lombok.Getter;
 import x1.model.Token;
@@ -16,7 +18,6 @@ public class Lexer {
     KEYWORDS.put("this", TokenType.THIS);
     KEYWORDS.put("new", TokenType.NEW);
     KEYWORDS.put("type", TokenType.TYPE);
-    KEYWORDS.put("function", TokenType.FUNCTION);
     KEYWORDS.put("var", TokenType.VAR);
     KEYWORDS.put("if", TokenType.IF);
     KEYWORDS.put("else", TokenType.ELSE);
@@ -28,6 +29,7 @@ public class Lexer {
   }
 
   private final InputStream in;
+  private final Deque<Token> tokenStack = new LinkedList<>();
   private int currentChar;
   @Getter private int line = 1;
   @Getter private int column = 1;
@@ -38,6 +40,9 @@ public class Lexer {
   }
 
   Token nextToken() throws IOException {
+    if (!tokenStack.isEmpty()) {
+      return tokenStack.pop();
+    }
 
     while (Character.isWhitespace(currentChar)) {
       consume();
@@ -158,6 +163,16 @@ public class Lexer {
     }
   }
 
+  void pushBack(Token token) {
+    tokenStack.push(token);
+  }
+
+  Token lookAhead() throws IOException {
+    Token token = nextToken();
+    pushBack(token);
+    return token;
+  }
+
   private void consume() throws IOException {
     currentChar = in.read();
     column++;
@@ -183,7 +198,7 @@ public class Lexer {
       buffer.append((char) currentChar);
       consume();
     }
-    return new Token(TokenType.NUMBER, buffer.toString());
+    return new Token(TokenType.INTEGER, buffer.toString());
   }
 
   private Token stringLiteral() throws IOException {

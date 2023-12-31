@@ -40,6 +40,29 @@ public class JavaCodeGenerator extends CLikeCodeGenerator {
               fieldDeclaration.accept(this);
               append(";\n");
             });
+    node.getMethodDeclarations()
+        .forEach(
+            methodDeclaration -> {
+              indent();
+              methodDeclaration.accept(this);
+              append("\n");
+            });
+    indent--;
+    indent();
+    append("}");
+  }
+
+  @Override
+  public void visit(MethodDeclarationNode methodDeclarationNode) {
+    append("public ");
+    type(methodDeclarationNode.getReturnType()).accept(this);
+    append(" ");
+    methodDeclarationNode.getIdentifier().accept(this);
+    append("(");
+    methodDeclarationNode.getParameterList().accept(this);
+    append(") {\n");
+    indent++;
+    methodDeclarationNode.getBlock().accept(this);
     indent--;
     indent();
     append("}");
@@ -54,9 +77,9 @@ public class JavaCodeGenerator extends CLikeCodeGenerator {
   }
 
   @Override
-  public void visit(MethodDeclarationNode node) {
+  public void visit(FunctionDeclarationNode node) {
     append("public ");
-    type(node.getType()).accept(this);
+    type(node.getReturnType()).accept(this);
     append(" ");
     node.getIdentifier().accept(this);
     append("(");

@@ -23,7 +23,7 @@ class ParserTest {
           new CompilationUnitNode(
               Collections.emptyList(),
               Collections.singletonList(
-                  new MethodDeclarationNode(
+                  new FunctionDeclarationNode(
                       new IdentifierNode(new Token(TokenType.IDENTIFIER, "sum")),
                       new ParameterListNode(
                           Arrays.asList(
@@ -48,7 +48,7 @@ class ParserTest {
                                           new IdentifierNode(
                                               new Token(TokenType.IDENTIFIER, "Int")),
                                           false),
-                                      new LiteralNode(new Token(TokenType.NUMBER, "0"))),
+                                      new LiteralNode(new Token(TokenType.INTEGER, "0"))),
                                   new BinaryExpressionNode(
                                       new IdentifierNode(new Token(TokenType.IDENTIFIER, "i")),
                                       new BinaryOperatorNode(new Token(TokenType.LESS, "<")),
@@ -58,7 +58,7 @@ class ParserTest {
                                       new BinaryExpressionNode(
                                           new IdentifierNode(new Token(TokenType.IDENTIFIER, "i")),
                                           new BinaryOperatorNode(new Token(TokenType.PLUS, "+")),
-                                          new LiteralNode(new Token(TokenType.NUMBER, "1")))),
+                                          new LiteralNode(new Token(TokenType.INTEGER, "1")))),
                                   new BlockNode(
                                       Collections.singletonList(
                                           new IfStatementNode(
@@ -69,11 +69,11 @@ class ParserTest {
                                                       new BinaryOperatorNode(
                                                           new Token(TokenType.MODULO, "%")),
                                                       new LiteralNode(
-                                                          new Token(TokenType.NUMBER, "2"))),
+                                                          new Token(TokenType.INTEGER, "2"))),
                                                   new BinaryOperatorNode(
                                                       new Token(TokenType.EQUAL_EQUAL, "==")),
                                                   new LiteralNode(
-                                                      new Token(TokenType.NUMBER, "0"))),
+                                                      new Token(TokenType.INTEGER, "0"))),
                                               new BlockNode(
                                                   Collections.singletonList(
                                                       new AssignmentStatementNode(
@@ -101,8 +101,8 @@ class ParserTest {
                                               new Token(TokenType.IDENTIFIER, "Int")),
                                           true),
                                       Arrays.asList(
-                                          new LiteralNode(new Token(TokenType.NUMBER, "1")),
-                                          new LiteralNode(new Token(TokenType.NUMBER, "2"))))),
+                                          new LiteralNode(new Token(TokenType.INTEGER, "1")),
+                                          new LiteralNode(new Token(TokenType.INTEGER, "2"))))),
                               new ForEachDeclarationNode(
                                   new IdentifierNode(new Token(TokenType.IDENTIFIER, "x")),
                                   new TypeNode(

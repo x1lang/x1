@@ -15,14 +15,54 @@ public class JavascriptCodeGenerator extends CLikeCodeGenerator {
   }
 
   @Override
-  public void visit(TypeDeclarationNode node) {}
+  public void visit(TypeDeclarationNode node) {
+    // class
+    append("class ");
+    node.getIdentifier().accept(this);
+    append(" {\n");
+    indent++;
+    // fields
+    node.getFieldDeclarations()
+        .forEach(
+            fieldDeclaration -> {
+              indent();
+              fieldDeclaration.accept(this);
+              append(";\n");
+            });
+    // methods
+    node.getMethodDeclarations()
+        .forEach(
+            methodDeclaration -> {
+              methodDeclaration.accept(this);
+              append("\n");
+            });
+    indent--;
+    indent();
+    append("}");
+  }
 
   @Override
-  public void visit(FieldDeclarationNode node) {}
+  public void visit(FieldDeclarationNode node) {
+    node.getIdentifier().accept(this);
+    append(" = ");
+    node.getType().accept(this);
+  }
 
   @Override
-  public void visit(MethodDeclarationNode node) {
-    append("function ");
+  public void visit(MethodDeclarationNode methodDeclarationNode) {
+    methodDeclarationNode.getIdentifier().accept(this);
+    append("(");
+    methodDeclarationNode.getParameterList().accept(this);
+    append(") {\n");
+    indent++;
+    methodDeclarationNode.getBlock().accept(this);
+    indent--;
+    indent();
+    append("}");
+  }
+
+  @Override
+  public void visit(FunctionDeclarationNode node) {
     node.getIdentifier().accept(this);
     append("(");
     node.getParameterList().accept(this);
@@ -40,7 +80,21 @@ public class JavascriptCodeGenerator extends CLikeCodeGenerator {
   }
 
   @Override
-  public void visit(TypeNode node) {}
+  public void visit(TypeNode node) {
+    switch (node.getIdentifier().getToken().getText()) {
+      case "Int":
+        append("0");
+        break;
+      case "String":
+        append("\"\"");
+        break;
+      case "Boolean":
+        append("false");
+        break;
+      default:
+        throw new IllegalArgumentException("Unknown type: " + node.getIdentifier());
+    }
+  }
 
   @Override
   public void visit(ForEachDeclarationNode node) {
