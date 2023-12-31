@@ -68,7 +68,7 @@ public class GoCodeGenerator extends CLikeCodeGenerator {
     append("func (this ");
     append(typeDeclarationNode.getIdentifier().getToken().getText());
     append(") ");
-    methodDeclarationNode.getIdentifier().accept(this);
+    typeIdentifier(methodDeclarationNode.getIdentifier()).accept(this);
     append("(");
     methodDeclarationNode.getParameterList().accept(this);
     append(") ");
