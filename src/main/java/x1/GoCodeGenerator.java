@@ -3,6 +3,8 @@ package x1;
 import x1.model.*;
 
 public class GoCodeGenerator extends CLikeCodeGenerator {
+  private TypeDeclarationNode typeDeclarationNode;
+
   @Override
   public String getLanguage() {
     return "go";
@@ -52,6 +54,7 @@ public class GoCodeGenerator extends CLikeCodeGenerator {
     indent--;
     indent();
     append("}");
+    this.typeDeclarationNode = node;
     node.getMethodDeclarations()
         .forEach(
             methodDeclaration -> {
@@ -62,7 +65,9 @@ public class GoCodeGenerator extends CLikeCodeGenerator {
 
   @Override
   public void visit(MethodDeclarationNode methodDeclarationNode) {
-    append("func (this) ");
+    append("func (this ");
+    append(typeDeclarationNode.getIdentifier().getToken().getText());
+    append(") ");
     methodDeclarationNode.getIdentifier().accept(this);
     append("(");
     methodDeclarationNode.getParameterList().accept(this);

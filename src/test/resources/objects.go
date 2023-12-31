@@ -1,9 +1,9 @@
 package main
 
 type Artist struct {
-  Age int
+	Age int
 }
 
-func (this) string() string {
-  return "What's up?"
+func (this Artist) string() string {
+	return "What's up?"
 }
