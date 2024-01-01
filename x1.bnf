@@ -1,6 +1,8 @@
 compilation_unit ::= [ package_statement ] {import_statement} type_declaration* function_declaration*
 
-package_statement ::= "package" package_name
+comment ::= ("//" character* )*
+
+package_statement ::= comment? "package" package_name
 
 package_name ::= identifier { "." identifier }
 
@@ -12,11 +14,11 @@ letter ::= "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l"
 
 digit ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
 
-type_declaration ::= "type" identifier "=" field_declaration*
+type_declaration ::= comment? "type" identifier "=" field_declaration*
 
-field_declaration ::= identifier ":" type
+field_declaration ::= comment? identifier ":" type
 
-function_declaration ::= identifier "(" [ parameter_list ] ")" [ ":" type ] block
+function_declaration ::= comment? identifier "(" [ parameter_list ] ")" [ ":" type ] block
 
 parameter_list ::= parameter { "," parameter }
 
@@ -26,7 +28,7 @@ type ::= '[]' identifier | identifier
 
 block ::= "{" { statement } "}"
 
-statement ::= variable_declaration | assignment_statement | if_statement | return_statement
+statement ::= comment? (variable_declaration | assignment_statement | if_statement | return_statement)
 
 variable_declaration ::= "var" identifier ":" type "=" expression
 

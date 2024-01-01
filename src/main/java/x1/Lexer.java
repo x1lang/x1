@@ -91,6 +91,15 @@ public class Lexer {
         return new Token(TokenType.MULTIPLY, "*");
       case '/':
         consume();
+        // might be comment start
+        if (currentChar == '/') {
+          StringBuilder buffer = new StringBuilder();
+          while (currentChar != '\n') {
+            buffer.append((char) currentChar);
+            consume();
+          }
+          return new Token(TokenType.COMMENT, buffer.toString());
+        }
         return new Token(TokenType.DIVIDE, "/");
       case '%':
         consume();

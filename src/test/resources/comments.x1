@@ -1,0 +1,12 @@
+
+// comment
+type Foo {
+    // comments
+    foo : Int
+}
+
+// comment
+foo() : Void {
+    // comment
+    return
+}

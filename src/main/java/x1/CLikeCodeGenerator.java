@@ -70,6 +70,8 @@ abstract class CLikeCodeGenerator extends AbstractCodeGenerator {
   @Override
   public void visit(ReturnStatementNode node) {
     append("return ");
-    node.getExpression().accept(this);
+    if (node.getExpression() != null) {
+      node.getExpression().accept(this);
+    }
   }
 }

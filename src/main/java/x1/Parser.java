@@ -26,10 +26,10 @@ public class Parser {
 
   private CompilationUnitNode compilationUnit() throws IOException {
     PackageDeclarationNode packageDeclaration = packageDeclaration();
-
     List<TypeDeclarationNode> typeDeclarations = new ArrayList<>();
     List<FunctionDeclarationNode> functionDeclarations = new ArrayList<>();
     while (currentToken.getType() != EOF) {
+      comments();
       if (currentToken.getType() == TYPE) {
         typeDeclarations.add(typeDeclaration());
       } else {
@@ -45,7 +45,7 @@ public class Parser {
       IdentifierNode identifier = identifier();
       return new PackageDeclarationNode(identifier);
     }
-    return null;
+    return new PackageDeclarationNode(new IdentifierNode(new Token(TokenType.IDENTIFIER, "")));
   }
 
   private TypeDeclarationNode typeDeclaration() throws IOException {
@@ -54,7 +54,8 @@ public class Parser {
     match(LBRACE);
     List<FieldDeclarationNode> fieldDeclarations = new ArrayList<>();
     List<MethodDeclarationNode> methodDeclaration = new ArrayList<>();
-    while (currentToken.getType() == IDENTIFIER) {
+    while (currentToken.getType() == IDENTIFIER || currentToken.getType() == COMMENT) {
+      comments();
       Token lookAhead = lexer.lookAhead();
       if (lookAhead.getType() == COLON) {
         fieldDeclarations.add(fieldDeclaration());
@@ -103,6 +104,12 @@ public class Parser {
     return new FunctionDeclarationNode(identifier, parameterList, type, block);
   }
 
+  private void comments() throws IOException {
+    while (currentToken.getType() == COMMENT) {
+      match(COMMENT);
+    }
+  }
+
   private ParameterListNode parameterList() throws IOException {
     List<ParameterNode> parameters = new ArrayList<>();
     if (currentToken.getType() == IDENTIFIER) {
@@ -142,6 +149,7 @@ public class Parser {
   }
 
   private StatementNode statement() throws IOException {
+    comments();
     switch (currentToken.getType()) {
       case VAR:
         return variableDeclaration();

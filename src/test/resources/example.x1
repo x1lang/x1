@@ -1,14 +1,21 @@
 package main
 
+// function declaration
 sum(v: Int, n: Int): Int {
-  for (var i:Int = 0; < i n; i = i + 1) {
+  // for loop (variable declaration; expression; variable assignment)
+  for (var i:Int = 0; i < n; i = i + 1) {
+    // if statement
     if (i % 2 == 0) {
+      // variable assignment
       v = v + i
     }
   }
+  // variable assignment, array expression
   var y:[]Int = new []Int [1,2]
+  // foreach loop
   foreach (x:Int; y) {
     v = v + x
   }
+  // return statement
   return v
 }

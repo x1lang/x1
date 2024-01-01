@@ -48,4 +48,5 @@ public enum TokenType {
   RPAREN,
   THIS,
   DOT,
+  COMMENT
 }
